@@ -1,0 +1,1370 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  #trip-app {
+    --parchment: #EFE8D6;
+    --parchment-2: #E4D8BC;
+    --pine: #26392C;
+    --pine-light: #3E5A46;
+    --river: #3C6E74;
+    --rust: #A9572B;
+    --rust-dark: #7C3F1D;
+    --gold: #C69A3E;
+    --ink: #2A2620;
+    --ink-soft: #5B5548;
+    --cream: #FBF6EA;
+    --line: #D3C6A3;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: var(--parchment);
+    border-radius: 16px;
+    padding: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  #trip-app * { box-sizing: border-box; }
+  #trip-app .display { font-family: 'Fraunces', serif; }
+  #trip-app .mono { font-family: 'JetBrains Mono', monospace; }
+
+  #trip-app header {
+    background:
+      linear-gradient(rgba(38,57,44,0.78), rgba(38,57,44,0.88)),
+      url('https://npgallery.nps.gov/GetAsset/3cd0b5e3-1dd8-b71b-0b65-81ad308bc259/proxymdres.jpg') center 40% / cover no-repeat;
+    color: var(--cream);
+    padding: 34px 32px 24px;
+  }
+  #trip-app header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 30px;
+    margin: 0 0 4px;
+    letter-spacing: 0.2px;
+  }
+  #trip-app header .subtitle {
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    color: var(--gold);
+    font-size: 15px;
+    margin: 0 0 18px;
+  }
+  #trip-app .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  #trip-app .stat-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  #trip-app .stat-card .num { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; color: var(--gold); }
+  #trip-app .stat-card .lbl { font-size: 11px; color: var(--cream); opacity: 0.75; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+
+  #trip-app nav.tabs {
+    display: flex;
+    background: var(--parchment-2);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #trip-app nav.tabs::-webkit-scrollbar { display: none; }
+  #trip-app nav.tabs button {
+    flex: 1 0 auto;
+    padding: 13px 14px;
+    white-space: nowrap;
+    background: transparent;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    letter-spacing: 0.2px;
+  }
+  #trip-app nav.tabs button.active {
+    color: var(--rust-dark);
+    border-bottom-color: var(--rust);
+  }
+  #trip-app nav.tabs button:hover { color: var(--ink); }
+
+  #trip-app .panel { display: none; padding: 26px 32px 34px; }
+  #trip-app .panel.active { display: block; }
+
+  #trip-app .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  #trip-app .route-caption {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    line-height: 1.5;
+  }
+
+  #trip-app .route-svg-wrap {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 4px 0;
+    margin-bottom: 26px;
+  }
+
+  #trip-app .route-stop { cursor: pointer; }
+  #trip-app .route-stop circle.dot { transition: r 0.15s ease; }
+  #trip-app .route-stop:hover circle.dot { r: 12; }
+
+  #trip-app .alert-card {
+    background: #F7E9D9;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  #trip-app .alert-card.done { background: #E7EFE3; border-color: var(--pine-light); opacity: 0.7; }
+  #trip-app .alert-check {
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--rust);
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    margin-top: 1px;
+  }
+  #trip-app .alert-card.done .alert-check { border-color: var(--pine-light); background: var(--pine-light); }
+  #trip-app .alert-card.done .alert-check::after {
+    content: '';
+    position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+    border: solid var(--cream); border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  #trip-app .alert-title { font-weight: 600; font-size: 14px; margin: 0 0 3px; }
+  #trip-app .alert-body { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+
+  #trip-app .day-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--cream);
+    margin-bottom: 14px;
+    overflow: hidden;
+    scroll-margin-top: 70px;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  #trip-app .day-card.flash { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(169,87,43,0.18); }
+  #trip-app .day-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+  }
+  #trip-app .day-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--pine);
+    color: var(--cream);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  #trip-app .day-meta { flex: 1; min-width: 0; }
+  #trip-app .day-date { font-size: 11px; color: var(--ink-soft); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  #trip-app .day-loc { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; margin-top: 1px; }
+  #trip-app .badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  #trip-app .badge.confirmed { background: #E1EEE0; color: #2F5C36; }
+  #trip-app .badge.needed { background: #F6DCC9; color: var(--rust-dark); }
+  #trip-app .chev { color: var(--ink-soft); transition: transform 0.2s ease; flex-shrink: 0; }
+  #trip-app .day-card.open .chev { transform: rotate(90deg); }
+  #trip-app .day-body { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  #trip-app .day-card.open .day-body { max-height: 1800px; }
+  #trip-app .day-body-inner { padding: 0 18px 18px 62px; font-size: 13.5px; line-height: 1.65; color: var(--ink); }
+  #trip-app .day-body-inner ul { margin: 6px 0; padding-left: 18px; }
+  #trip-app .day-body-inner .tag {
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    background: var(--parchment-2); padding: 2px 7px; border-radius: 5px; margin: 2px 6px 2px 0;
+  }
+  #trip-app .license-note { color: var(--river); font-weight: 600; }
+  #trip-app .link-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  #trip-app .link-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 500; text-decoration: none;
+    background: var(--parchment-2); color: var(--rust-dark);
+    padding: 5px 11px; border-radius: 20px; border: 1px solid var(--line);
+  }
+  #trip-app .link-chip:hover { background: var(--gold); color: var(--cream); border-color: var(--gold); }
+  #trip-app .link-chip::after { content: '\2197'; font-size: 11px; }
+
+  #trip-app .progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  #trip-app .progress-bar { flex: 1; height: 8px; background: var(--parchment-2); border-radius: 6px; overflow: hidden; }
+  #trip-app .progress-fill { height: 100%; background: var(--rust); border-radius: 6px; transition: width 0.3s ease; }
+  #trip-app .progress-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+
+  #trip-app .pack-cat { margin-bottom: 20px; }
+  #trip-app .pack-cat-title {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; margin: 0 0 8px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line); color: var(--pine);
+  }
+  #trip-app .pack-item {
+    display: flex; align-items: center; gap: 10px; padding: 7px 2px; cursor: pointer;
+  }
+  #trip-app .pack-check {
+    width: 18px; height: 18px; min-width: 18px; border: 2px solid var(--river); border-radius: 4px; position: relative;
+  }
+  #trip-app .pack-item.checked .pack-check { background: var(--river); }
+  #trip-app .pack-item.checked .pack-check::after {
+    content: ''; position: absolute; left: 4px; top: 0; width: 4px; height: 9px;
+    border: solid var(--cream); border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  #trip-app .pack-item span { font-size: 13.5px; }
+  #trip-app .pack-item.checked span { text-decoration: line-through; color: var(--ink-soft); }
+  #trip-app .pack-item .owned-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; background: #E1EEE0; color: #2F5C36;
+    padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+  }
+
+  #trip-app .res-group { margin-bottom: 22px; }
+  #trip-app .res-group-title {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; margin: 0 0 4px; color: var(--pine);
+  }
+  #trip-app .res-group-note { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.5; }
+  #trip-app .res-card {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--cream); border: 1px solid var(--line); border-radius: 10px;
+    padding: 11px 14px; margin-bottom: 8px;
+  }
+  #trip-app .res-card .res-name { font-weight: 600; font-size: 13.5px; }
+  #trip-app .res-card .res-desc { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  #trip-app .res-link {
+    font-size: 12px; font-weight: 600; text-decoration: none; color: var(--river);
+    white-space: nowrap; padding: 6px 12px; border: 1px solid var(--river); border-radius: 20px;
+  }
+  #trip-app .res-link:hover { background: var(--river); color: var(--cream); }
+
+  #trip-app .sun-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 20px; }
+  #trip-app .sun-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-soft); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  #trip-app .sun-table td { padding: 6px 8px; border-bottom: 1px solid var(--parchment-2); font-family: 'JetBrains Mono', monospace; }
+  #trip-app .trivia-card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  #trip-app .trivia-card .t-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px; color: var(--pine); margin: 0 0 3px; }
+  #trip-app .trivia-card .t-fact { font-size: 12.5px; color: var(--ink); margin: 0; line-height: 1.55; }
+  #trip-app .wl-card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  #trip-app .wl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  #trip-app .wl-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14.5px; color: var(--pine); }
+  #trip-app .wl-dist { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--parchment-2); padding: 2px 8px; border-radius: 5px; white-space: nowrap; }
+  #trip-app .wl-body { font-size: 12.5px; color: var(--ink); margin: 5px 0 0; line-height: 1.55; }
+
+  #trip-app .cat-est { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--rust); font-weight: 600; margin-left: 8px; }
+  #trip-app .item-est { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); margin-left: auto; padding-left: 10px; white-space: nowrap; }
+  #trip-app .grand-total { background: var(--pine); color: var(--cream); border-radius: 10px; padding: 14px 18px; font-size: 13.5px; line-height: 1.55; margin-top: 6px; }
+  #trip-app .start-card { display: flex; gap: 12px; align-items: baseline; background: var(--cream); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+  #trip-app .start-card .s-day { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--rust); font-weight: 600; white-space: nowrap; }
+  #trip-app .start-card .s-body { font-size: 13px; line-height: 1.55; }
+  #trip-app .start-card.warn { border-left: 3px solid var(--gold); }
+  #trip-app .start-card.action { border-left: 3px solid var(--rust); }
+
+  #trip-app .pack-link { font-size: 11px; color: var(--rust); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  #trip-app .pack-link:hover { text-decoration: underline; }
+
+  #trip-app .hikes-block { background: var(--parchment-2); border-radius: 8px; padding: 10px 14px; margin: 10px 0 4px; }
+  #trip-app .hikes-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--pine-light); font-weight: 600; margin: 0 0 6px; }
+  #trip-app .hikes-block ul { margin: 0; padding-left: 18px; }
+  #trip-app .hikes-block li { font-size: 12.5px; line-height: 1.55; margin-bottom: 5px; }
+
+  #trip-app .guide-note {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 13.5px; color: var(--pine-light);
+    border-left: 3px solid var(--gold); padding: 6px 12px; margin: 10px 0 4px; line-height: 1.55;
+    border-radius: 0;
+  }
+
+  #trip-app .day-hero { width: 100%; height: 150px; object-fit: cover; display: block; }
+  #trip-app .day-hero-credit { font-size: 10px; color: var(--ink-soft); font-style: italic; padding: 4px 18px 0 62px; }
+
+  #trip-app .wl-img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; display: block; }
+  #trip-app .wl-credit { font-size: 10.5px; color: var(--ink-soft); margin: -4px 0 8px; font-style: italic; }
+
+  #trip-app footer.note {
+    font-size: 12px; color: var(--ink-soft); padding: 14px 32px 22px; border-top: 1px solid var(--line); background: var(--parchment-2);
+  }
+
+  @media (max-width: 640px) {
+    #trip-app header { padding: 22px 16px 16px; }
+    #trip-app .panel { padding: 18px 14px 26px; }
+    #trip-app .stat-row { grid-template-columns: repeat(2, 1fr); }
+    #trip-app .day-head { gap: 10px; padding: 12px 12px; }
+    #trip-app .day-hero { height: 120px; }
+    #trip-app .day-hero-credit { padding: 4px 12px 0 12px; }
+    #trip-app .day-body-inner { padding-left: 12px; padding-right: 12px; }
+    #trip-app .route-svg-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    #trip-app .route-svg-wrap svg { min-width: 760px; }
+    #trip-app .pack-item { padding: 10px 2px; }
+    #trip-app .wl-head { flex-wrap: wrap; }
+    #trip-app .item-est { padding-left: 6px; }
+    #trip-app .start-card { flex-direction: column; gap: 4px; }
+    #trip-app .grand-total { font-size: 13px; }
+    #trip-app .hikes-block { padding: 10px 10px; }
+    #trip-app .sun-table { font-size: 12px; }
+    #trip-app .guide-note { font-size: 13px; }
+  }
+</style>
+
+<div id="trip-app">
+  <header>
+    <h1>Yellowstone &amp; Grand Teton</h1>
+    <p class="subtitle">RV fishing trip &middot; Aug 2&ndash;10, 2026 &middot; Bozeman round-trip &middot; party of four</p>
+    <div class="stat-row">
+      <div class="stat-card"><div class="num">9</div><div class="lbl">Days</div></div>
+      <div class="stat-card"><div class="num">6</div><div class="lbl">Campgrounds</div></div>
+      <div class="stat-card"><div class="num">3</div><div class="lbl">Fishing licenses</div></div>
+      <div class="stat-card"><div class="num">1</div><div class="lbl">Open item</div></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="start" class="active">Start here</button>
+    <button data-tab="overview">Route</button>
+    <button data-tab="itinerary">Day-by-day</button>
+    <button data-tab="conditions">Conditions</button>
+    <button data-tab="wildlife">Wildlife & tips</button>
+    <button data-tab="meals">Meals</button>
+    <button data-tab="packing">Packing</button>
+    <button data-tab="resources">Links &amp; buying</button>
+  </nav>
+
+  <div class="panel active" id="panel-start">
+    <p class="section-label">Trip highlights — don’t miss these</p>
+    <div id="start-highlights"></div>
+    <p class="section-label">Iron out before / early in the trip</p>
+    <div id="start-actions"></div>
+    <p class="section-label">Be aware</p>
+    <div id="start-aware"></div>
+    <p class="section-label">Budget snapshot (group of 4, estimates)</p>
+    <div id="start-budget"></div>
+  </div>
+
+  <div class="panel" id="panel-overview">
+    <p class="section-label">Trip loop, elevation by stop</p>
+    <p class="route-caption">Schematic, not a literal map &mdash; horizontal position is day order, vertical position is approximate elevation. Tap a stop to jump to that day.</p>
+    <div class="route-svg-wrap">
+      <svg viewBox="0 0 1200 250" style="width:100%; height:auto; display:block;">
+        <polyline id="route-line" fill="none" stroke="#3C6E74" stroke-width="2.5" stroke-linejoin="round" points=""></polyline>
+      </svg>
+    </div>
+
+    <p class="section-label">Open items</p>
+    <div id="open-items"></div>
+  </div>
+
+  <div class="panel" id="panel-itinerary">
+    <div id="itinerary-list"></div>
+  </div>
+
+  <div class="panel" id="panel-conditions">
+    <div class="alert-card" style="background:#F6DCC9; border-color:var(--rust);">
+      <div style="width:20px;"></div>
+      <div><p class="alert-title">Snapshot as of Sat, Aug 1, 2026</p><p class="alert-body">Fishing closures and water levels update daily based on real-time temperature readings. Re-check the linked sources within a day or two of fishing, don’t rely on this snapshot alone.</p></div>
+    </div>
+    <div id="conditions-list"></div>
+  </div>
+
+  <div class="panel" id="panel-wildlife">
+    <div class="alert-card" style="background:#E7EFE3; border-color:var(--pine-light);">
+      <div style="width:20px;"></div>
+      <div><p class="alert-title">You’re here for the bison rut</p><p class="alert-body">Late July through August is peak bison rut in Hayden Valley and Lamar Valley — bulls bellowing, wallowing, and fighting for breeding rights. It lines up exactly with your Day 5 loop. Go early morning; the Canyon area gridlocks with bison jams from noon to dusk in August.</p></div>
+    </div>
+    <p class="section-label">Wildlife spotting guide</p>
+    <div id="wildlife-list"></div>
+    <div class="alert-card" style="margin-top:4px;">
+      <div style="width:20px;"></div>
+      <div><p class="alert-title">On every trail</p><p class="alert-body">NPS guidance: hike in groups of 3 or more, keep the group together, carry bear spray where you can reach it in 2 seconds (not in a pack), and make noise around blind corners and streams. If a bear charges, spray at 25–40 ft aimed slightly downward.</p></div>
+    </div>
+    <p class="section-label">Old Faithful cheat sheet</p>
+    <div id="geyser-list"></div>
+    <p class="section-label">Sunrise / sunset, Aug 2–9 (for golden hour planning)</p>
+    <div id="suntimes-table"></div>
+    <p class="section-label">Landmark quick facts</p>
+    <div id="trivia-list"></div>
+  </div>
+
+  <div class="panel" id="panel-meals">
+    <div class="alert-card" style="background:#E7EFE3; border-color:var(--pine-light);">
+      <div style="width:20px;"></div>
+      <div><p class="alert-title">The plan: one big shop, two top-ups</p><p class="alert-body">Big run Sunday Day 1 in Bozeman: gear at Sportsman’s Warehouse (Sun 10–6) FIRST, then groceries at Town &amp; Country Foods (open til 10 PM) after — gear stores close early on Sundays, food doesn’t. Top up at Gardiner Market Day 2, restock produce/ice at Jackson Albertsons Day 7. Two coolers: one drinks-and-daily (opened constantly), one deep-storage for meats (opened once a day, stays cold).</p></div>
+    </div>
+    <p class="section-label">Dinner plan, night by night</p>
+    <div id="meals-list"></div>
+    <p class="section-label">Breakfast &amp; lunch system</p>
+    <div id="meals-system"></div>
+    <p class="section-label">Grocery checklist (tap to check off while shopping)</p>
+    <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="grocery-progress-fill" style="width:0%"></div></div><div class="progress-num" id="grocery-progress-label">0 / 0</div></div>
+    <div id="grocery-list"></div>
+  </div>
+
+  <div class="panel" id="panel-packing">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="pack-progress-fill" style="width:0%"></div></div>
+      <div class="progress-num" id="pack-progress-num">0 / 0</div>
+    </div>
+    <div id="packing-list"></div>
+  </div>
+
+  <div class="panel" id="panel-resources">
+    <div id="resources-list"></div>
+  </div>
+
+  <footer class="note">Snake River Canyon rafting is the one unresolved item &mdash; check it off in Route once confirmed. Checklists save automatically. Links open in a new confirmation step.</footer>
+</div>
+
+<script>
+(function() {
+  var root = document.getElementById('trip-app');
+
+  var stops = [
+    { day: 1, date: 'Sun, Aug 2', loc: 'Bozeman', elev: 4820, status: 'confirmed',
+      guide: 'Bozeman is the classic Yellowstone staging town \u2014 fly shops, gear stores, and a good steak before nine days of camp cooking.',
+      lines: [
+        '<b>Signal:</b> Full coverage, all carriers. Last guaranteed connectivity \u2014 download offline maps for both parks tonight.',
+        'Airbnb &mdash; Home in Bozeman, hosted by Courtney, 3039 Candy Lane. Check-in 4:00 PM, checkout Mon 10:00 AM.',
+        'Dinner: J.W. Heist Steakhouse, 7:30 PM, 27 E Main St.',
+        '<b>Sunday shopping sequence (gear stores close 6 PM, grocery open til 10):</b>',
+        '<b>1.</b> Sportsman\u2019s Warehouse, 2214 Tschache Ln (Sun 10\u20136) \u2014 one stop for: bear spray x2, 2-piece spinning rod, rubber-mesh net, tippet, neoprene socks, headlamps. They\u2019ll also spool fresh braid on your reel in 5 minutes if the line\u2019s old.',
+        '<b>2.</b> REI, next door on Tschache (Sun 11\u20136) \u2014 only if anyone needs clothing: base layers, rain shells, river shoes.',
+        '<b>3.</b> Town &amp; Country Foods (multiple locations, 7 AM\u201310 PM daily) \u2014 the full grocery list from the Meals tab. Local chain, strong meat counter for the ribeyes and bison brats. Costco (members, Sun ~10\u20136) works for bulk water/snacks if you\u2019re there before 6.',
+        'Montana fishing licenses are online-only \u2014 buy on your phone from anywhere, no store stop needed (link below).',
+        'Real kitchen tonight &mdash; hold off loading the RV cooler until Monday morning.'
+      ],
+      links: [
+        { label: 'Buy Montana fishing license', url: 'https://fwp.mt.gov/buyandapply/fishinglicenses' },
+        { label: 'Sportsman\u2019s Warehouse Bozeman', url: 'https://stores.sportsmans.com/sportsmans-warehouse/us/mt/bozeman/2214-tschache-lane' },
+        { label: 'Yellow Dog Flyfishing (Bozeman)', url: 'https://www.yellowdogflyfishing.com/pages/yellow-dog-fly-shop' },
+        { label: 'J.W. Heist Steakhouse', url: 'https://jwheist.com/' }
+      ] },
+    { day: 2, date: 'Mon, Aug 3',
+      hero: 'https://npgallery.nps.gov/GetAsset/1fc11f22-61f5-4cc5-9158-640b907fdc5a/proxyhires', heroCredit: 'NPS Photo \u2014 Roosevelt Arch, the north entrance you\u2019ll drive through', loc: 'Gardiner, MT', sub: 'Sun Outdoors Yellowstone North', elev: 5314, status: 'confirmed',
+      guide: 'You\u2019ll enter under the Roosevelt Arch, cornerstone laid by Theodore Roosevelt himself in 1903 \u2014 the inscription reads \u201cFor the Benefit and Enjoyment of the People.\u201d',
+      lines: [
+        '<b>Signal:</b> Good in Gardiner and the Gardiner\u2014Mammoth corridor (Verizon/AT&T strong, T-Mobile okay in town only).',
+        'Site: Back In E/W 21. Confirmation R00000011673.',
+        'Check out of Airbnb by 10:00 AM, load cooler and RV supplies before leaving Bozeman.',
+        '~1.5&ndash;2 hr drive to Gardiner. Enter park via the north entrance.',
+        'Fish the Yellowstone River near Gardiner, or stage gear for tomorrow.',
+        'Roosevelt Arch is 2 minutes from camp \u2014 the historic north entrance, worth a quick photo stop.',
+        '<b>Drone window:</b> Paradise Valley / Yankee Jim Canyon, 10\u201320 min north of Gardiner on US-89 \u2014 Custer Gallatin National Forest, legal to fly. The Yellowstone River cutting through the canyon at golden hour is the best legal aerial footage on the Montana side. The Arch and everything past it is park \u2014 drone stays down.',
+        'Evening: Yellowstone Hot Springs (Corwin Springs, ~10 min north of Gardiner) \u2014 commercial soaking pools, 103\u2013105\u00b0F hot pool, no reservation needed. Boiling River\u2019s wild soaking area has been permanently closed since the 2022 floods, so this is the real option now.'
+      ],
+      links: [
+        { label: 'Yellowstone fishing permit info', url: 'https://www.nps.gov/yell/planyourvisit/fishing.htm' },
+        { label: 'Buy permit via Recreation.gov', url: 'https://www.recreation.gov/' },
+        { label: 'Yellowstone Hot Springs', url: 'https://yellowstonehotspringsmt.com/' }
+      ] },
+    { day: 3, date: 'Tue, Aug 4',
+      hero: 'https://www.nps.gov/yell/espanol/images/35608783921_c2ad76a1b3_k.jpg', heroCredit: 'NPS / Jacob W. Frank \u2014 fly fishing near Biscuit Basin', loc: 'Madison Campground', elev: 6806, status: 'confirmed',
+      guide: 'Madison sits at the junction where the Firehole and Gibbon meet to form the Madison River \u2014 elk graze these meadows most evenings.',
+      hikes: [
+        'Artist Paint Pots \u2014 1 mi round trip through mudpots, small geysers, and steam vents, ~9 mi north of camp toward Norris. Easy leg-stretcher.',
+        'Gibbon Falls \u2014 roadside pullout just south of the Paint Pots, no hike required.',
+      ],
+      lines: [
+        '<b>Signal:</b> LIMITED. No tower at Madison \u2014 expect little to nothing at camp. Buffalo Ford fishing water is dead zone; nearest reliable signal is Canyon or West Yellowstone. Set expectations with anyone back home.',
+        '40\' RV / large tent site. Check-in 1:00 PM, checkout Wed 11:00 AM.',
+        'Fish Buffalo Ford / LeHardy Rapids on the Yellowstone River &mdash; open since July 15, easy wading, reliable cutthroat.',
+        'Confirm the Madison/Firehole/Gibbon confluence closure status locally before fishing that stretch.'
+      ],
+      links: [
+        { label: 'YNP fishing regulations (PDF)', url: 'https://go.nps.gov/yellfishregulations' },
+        { label: 'Current trail/water conditions', url: 'https://www.nps.gov/yell/planyourvisit/situationreport.htm' }
+      ] },
+    { day: 4, date: 'Wed, Aug 5',
+      hero: 'https://npgallery.nps.gov/GetAsset/3cd0b5e3-1dd8-b71b-0b65-81ad308bc259/proxymdres.jpg', heroCredit: 'NPS / Jim Peaco \u2014 Grand Prismatic Spring, on this day\u2019s loop', loc: 'Grant Village', elev: 7783, status: 'confirmed',
+      guide: 'Grant Village sits on West Thumb \u2014 a caldera within the caldera, blown out by an eruption 174,000 years ago and now a bay of Yellowstone Lake.',
+      hikes: [
+        'Grand Prismatic Overlook \u2014 1.2 mi round trip, 105 ft climb, THE view down onto the spring. Note: RVs are prohibited in the Fairy Falls lot, so plan around the rig or drop hikers.',
+        'Fairy Falls \u2014 add 3+ mi to the overlook trail for a flat walk to a 200-ft waterfall. Easy despite the length.',
+        'Skip Mystic Falls: its trailhead is Biscuit Basin, closed since the 2024 hydrothermal explosion \u2014 and a second explosion hit the same area June 13, 2026.',
+      ],
+      lines: [
+        '<b>Signal:</b> Moderate. Towers at Grant Village and Old Faithful give usable signal at both \u2014 but the road between (Craig Pass) is dead. Texts beat calls; midday crowds swamp the circuits.',
+        'Grant Campground, 40\' RV &amp; large tent site. First of two consecutive one-night bookings.',
+        'Your only stationary block &mdash; use it. Lewis Lake / Lewis Channel: shore-castable browns, unaffected by heat closures.',
+        'Fill a non-fishing half day here: Old Faithful and Grand Prismatic are both under an hour away.'
+      ],
+      links: [
+        { label: 'Old Faithful area guide', url: 'https://www.nps.gov/yell/planyourvisit/exploreoldfaithful.htm' },
+        { label: 'Grand Prismatic overlook trail', url: 'https://www.nps.gov/thingstodo/yell-trail-grand-prismatic-overlook.htm' }
+      ] },
+    { day: 5, date: 'Thu, Aug 6',
+      hero: 'https://npgallery.nps.gov/GetAsset/08466171-1dd8-b71b-0bdf-41858b5562de/proxymdres.jpg', heroCredit: 'NPS / Jim Peaco \u2014 Lower Falls of the Yellowstone, 308 ft', loc: 'Grant Village', elev: 7783, status: 'confirmed',
+      guide: 'Thomas Moran\u2019s 1872 painting of this canyon helped convince Congress to create the world\u2019s first national park \u2014 they paid him $10,000 for it and gave the park a budget of $0 that year.',
+      hikes: [
+        'Artist Point to Point Sublime \u2014 2.6 mi round trip along the canyon\u2019s south rim from the Artist Point lot. Flat, huge views the whole way.',
+        'Brink of the Lower Falls \u2014 short but steep switchbacks down to the lip of the 308-ft falls. The closest view in the park.',
+        'Storm Point \u2014 ~2.3 mi easy loop on the Yellowstone Lake shore, 3 mi east of Fishing Bridge, directly on this day\u2019s route.',
+      ],
+      lines: [
+        '<b>Signal:</b> Intermittent. Hayden Valley is a named dead zone \u2014 the entire wildlife stretch is offline. Canyon Village has signal (AT&T strongest there), Fishing Bridge/Lake has some. Plan the loop like you\u2019ll be unreachable most of the day.',
+        'Second night at Grant Campground.',
+        'Use this day for Hayden Valley + the Grand Canyon of the Yellowstone (Artist Point) \u2014 a loop via Fishing Bridge and Canyon Village. This side of the park is currently missing from your plan entirely, and it\u2019s the best bison/wildlife stretch plus the most photographed waterfall view in Yellowstone.',
+        'Full loop from Grant Village and back is roughly 2\u20132.5 hrs driving without stops \u2014 budget a full day with stops.'
+      ],
+      links: [
+        { label: 'Hayden Valley (NPS)', url: 'https://www.nps.gov/yell/learn/photosmultimedia/0027haydenvalley-iy.htm' },
+        { label: 'Grand Canyon of the Yellowstone / Artist Point', url: 'https://www.nps.gov/places/000/grand-canyon-of-the-yellowstone-artist-point.htm' }
+      ] },
+    { day: 6, date: 'Fri, Aug 7',
+      hero: 'https://www.nps.gov/common/uploads/cropped_image/primary/C52A9D54-D552-3636-C6144CE833DAC763.jpg?width=1300&quality=90&mode=crop', heroCredit: 'NPS Photo \u2014 Oxbow Bend, minutes from camp', loc: 'Flagg Ranch (Moran, WY)', sub: 'Headwaters Campground', elev: 6800, status: 'confirmed',
+      guide: 'The Snake below Jackson Lake Dam holds fine-spotted cutthroat found nowhere else on Earth \u2014 a dam-fed tailwater that stays cold when everything else runs warm.',
+      hikes: [
+        'Polecat Creek Loop \u2014 ~2.5 mi easy loop starting right at Headwaters/Flagg Ranch through meadow and forest with hot-spring runoff. Shared with horses, so watch your step.',
+      ],
+      lines: [
+        '<b>Signal:</b> LIMITED. Flagg Ranch sits in the coverage gap between the parks \u2014 expect nothing reliable at camp. Some signal near Colter Bay/Jackson Lake Lodge if needed. Second dark night for anyone expecting replies.',
+        'Site 103, 100s. Check-in 2:00 PM, checkout Sat 11:00 AM.',
+        'Fish the Snake River below Jackson Lake Dam &mdash; tailwater, cold regardless of heat, fine-spotted cutthroat.',
+        '<span class="license-note">License switch: Wyoming state license required here, not the Yellowstone park permit.</span>',
+        'If the Snake River Canyon rafting trip is happening, this is the day to slot it &mdash; still unconfirmed as of last check. Both operators below run trips right out of the canyon near Flagg Ranch/Jackson.',
+        'Oxbow Bend is a few minutes south toward Moran Junction &mdash; classic Mt. Moran reflection shot, good moose odds, quickest of the Teton photo stops (most people spend 15 min here).'
+      ],
+      links: [
+        { label: 'Buy Wyoming fishing license', url: 'https://wgfapps.wyo.gov/elso/ELSOWelcome.aspx' },
+        { label: 'Dave Hansen Whitewater (book rafting)', url: 'https://www.davehansenwhitewater.com/' },
+        { label: 'Mad River Boat Trips (alt. rafting)', url: 'https://www.mad-river.com/' }
+      ] },
+    { day: 7, date: 'Sat, Aug 8',
+      hero: 'https://npgallery.nps.gov/GetAsset/e87ad4aa-8960-4310-975c-c74cd50d0997/proxymdres.jpg', heroCredit: 'NPS / Jim Peaco \u2014 moose favor the willows near Gros Ventre', loc: 'Gros Ventre Campground', sub: 'near Jackson, WY', elev: 6400, status: 'confirmed',
+      guide: 'Gros Ventre (\u201cGROH-vont\u201d) is named for the river, which is named for a tribe \u2014 and the campground cottonwoods are a known moose hangout at dawn.',
+      hikes: [
+        'Taggart Lake \u2014 3 mi round trip (3.8 mi as a loop) to an alpine lake below the Tetons. Heads up: the trailhead has 2026 construction \u2014 check status before driving over.',
+        'Jenny Lake: boat shuttle across, then 0.5 mi to Hidden Falls and another 0.5 mi up to Inspiration Point. Shuttle runs all season, no reservation.',
+      ],
+      lines: [
+        '<b>Signal:</b> Good. Jackson has full coverage on all carriers; the Teton valley corridor is mostly decent. Best day of the trip to catch up, upload, and confirm the flight.',
+        'Site 198, D. Check-in 12:00 PM, checkout Sun 11:00 AM.',
+        '<span class="tag">1:00&ndash;3:00 PM</span> Togwotee Mountain Lodge UTV rental, Moran WY &mdash; arrive 12:40 PM, meet at 27655 US-26.',
+        'Fish the Snake in the morning before the UTV tour, or drive straight to Moran.',
+        'Evening: Jackson town square, or Flat Creek on the National Elk Refuge if daylight allows &mdash; opens Aug 1, fly-only, tough but well-known for trophy cutthroat.',
+        'This is the real Jackson day &mdash; don\u2019t count on Sunday for it.',
+        'If there\u2019s a window: Mormon Row barns, Schwabacher Landing, and Snake River Overlook are all close together and stack well as a morning or evening loop.',
+        '<b>Drone window:</b> Shadow Mountain, just east of Mormon Row across the park boundary in Bridger-Teton National Forest \u2014 THE legal spot for a full Teton Range panorama, the closest thing to the postcard shot you can lawfully fly. Verify the boundary and Jackson Hole airspace in B4UFLY before launching. The UTV tour at Togwotee is also on Forest land \u2014 ask the operator; Continental Divide footage from up there is a legitimate second window.',
+        'Grand Teton has flagged significant road construction delays park-wide this season &mdash; check before committing to a tight schedule, especially around Jenny Lake.'
+      ],
+      links: [
+        { label: 'Flat Creek fishing rules (Elk Refuge)', url: 'https://www.fws.gov/refuge/national-elk/visit-us/activities/fishing' },
+        { label: 'GTNP road construction updates', url: 'https://www.nps.gov/grte/planyourvisit/road-construction.htm' },
+        { label: 'Jenny Lake boat shuttle (2026 season)', url: 'https://jennylakeboating.com/' }
+      ] },
+    { day: 8, date: 'Sun, Aug 9',
+      hero: 'https://npgallery.nps.gov/GetAsset/66e90f75-e0a3-4445-89a2-0239e4d92712/proxymdres.jpg', heroCredit: 'NPS / Janine Waller \u2014 Hayden Valley bison, likely roadside company on the drive north', loc: 'Gardiner, MT', sub: 'The Yellowstone RV Park', elev: 5314, status: 'confirmed',
+      guide: 'The drive north crosses the Continental Divide twice \u2014 rain falling a few feet apart here ends up in different oceans.',
+      lines: [
+        '<b>Signal:</b> Dead for most of the 4.5-hr drive (park interior, Norris) \u2014 then good from Mammoth down into Gardiner. Tell people the ETA before leaving Jackson, not from the road.',
+        '30 amp river back-in site. Booking 76814074. Check-in Sun, checkout Mon.',
+        'Longest drive of the trip &mdash; Jackson to Gardiner is 4.5+ hours before stops. Treat this as a transit day.',
+        'Break up the drive with Norris Geyser Basin (the park\u2019s hottest, most dynamic thermal area) and Mammoth Hot Springs terraces \u2014 both sit directly on the route and you haven\u2019t seen either yet, so no repeat of Wednesday/Thursday\u2019s stops.',
+        'Back in Gardiner: Yellowstone Hot Springs again if a soak sounds good before the last night.',
+        '<b>Drone window:</b> last chance for Paradise Valley aerials north of town \u2014 evening light on Emigrant Peak is the shot.'
+      ],
+      links: [
+        { label: 'Norris Geyser Basin (NPS)', url: 'https://www.nps.gov/yell/planyourvisit/norrisplan.htm' },
+        { label: 'Mammoth Hot Springs (NPS)', url: 'https://www.nps.gov/yell/planyourvisit/explore-mammoth.htm' }
+      ] },
+    { day: 9, date: 'Mon, Aug 10', loc: 'Bozeman', elev: 4820, status: 'confirmed',
+      guide: 'Nine days, two states, three fishing jurisdictions, one supervolcano. Not bad.',
+      lines: [
+        '<b>Signal:</b> Full coverage, Bozeman + airport.',
+        '<span class="tag">UA348</span> BZN 11:38 AM \u2192 EWR 6:00 PM. Confirmation C9B3NR, seat 21F.',
+        'Work backward from 11:38: at airport ~9:30, RV returned/fueled before that, so leave Gardiner 7:00\u20137:30 AM. Fuel and dump the tanks the night before, not the morning of.',
+        'Checked bags: $50 first / $60 second, 50 lb limit \u2014 weigh the fishing duffel before the airport.',
+        'Bear spray cannot fly home either \u2014 gift it to a neighboring campsite or leave it at the RV return desk.'
+      ],
+      links: [] }
+  ];
+
+  var openItemsData = [
+    { id: 'rafting', title: 'Snake River Canyon rafting', body: 'Referenced in planning but no confirmation found. If it\'s happening, Friday 8/7 at Flagg Ranch is the day it fits &mdash; confirm the booking before you leave. Two operator links are in Day 6 and in Links & buying.' }
+  ];
+
+  var packingData = [
+    { cat: 'Carry-on (never checked)', items: [
+      'Fly reels (2\u20133, wrapped in socks/pouches)',
+      'Fly box, tippet, leaders, forceps, nippers',
+      'Prescriptions, chargers, passport/ID',
+      'Fishing licenses \u2014 Montana, Wyoming, Yellowstone NP permit (paper + phone screenshot)',
+      { t: 'Polarized sunglasses \u2014 e.g. Smith Guide\u2019s Choice, or any polarized at Sportsman\u2019s', url: 'https://www.rei.com/search?q=polarized+fishing+sunglasses' },
+      'One change of clothes'
+    ]},
+    { cat: 'Checked \u2014 clothing', items: [
+      { t: 'Base layer top \u2014 e.g. Smartwool Merino 150 crew or Patagonia Capilene Cool (no cotton)', url: 'https://www.rei.com/search?q=merino+base+layer+crew+mens' },
+      { t: 'Fleece or light puffy \u2014 e.g. Patagonia R1 fleece / Nano Puff', url: 'https://www.rei.com/search?q=mens+fleece+midlayer' },
+      { t: 'Waterproof shell \u2014 e.g. Marmot PreCip or Patagonia Torrentshell (rain bumps Aug 4 + 9)', url: 'https://www.rei.com/search?q=mens+rain+jacket+waterproof' },
+      { t: '3\u20134 quick-dry shirts \u2014 e.g. Columbia PFG Tamiami or Simms SolarFlex sun hoody', url: 'https://www.amazon.com/s?k=columbia+pfg+tamiami+fishing+shirt' },
+      { t: '1\u20132 quick-dry shorts, 1 pair zip-off pants \u2014 e.g. prAna Stretch Zion, Columbia Silver Ridge', url: 'https://www.rei.com/search?q=mens+convertible+hiking+pants' },
+      'Sleepwear',
+      { t: '5\u20136 pairs wool/synthetic socks \u2014 e.g. Darn Tough hiker', url: 'https://www.rei.com/search?q=darn+tough+hiking+socks' },
+      'Underwear x6\u20137 (synthetic, e.g. ExOfficio)',
+      { t: 'Wide-brim hat + baseball cap \u2014 e.g. Outdoor Research Sombriolet', url: 'https://www.rei.com/search?q=sun+hat+wide+brim' },
+      { t: 'Buff / neck gaiter \u2014 original Buff UV, doubles as fishing sun cover', url: 'https://www.amazon.com/s?k=buff+uv+neck+gaiter' },
+      'Swimsuit (doubles as wet-wading bottoms)'
+    ]},
+    { cat: 'Checked \u2014 footwear', items: [
+      'Hiking shoes (owned)',
+      { t: 'River/water shoes \u2014 e.g. Astral Loyak, Chaco Z/1, or Keen Newport H2. Skip $15 mesh slippers; river rock wins.', url: 'https://www.amazon.com/s?k=astral+loyak+water+shoes' },
+      { t: 'Neoprene socks \u2014 NRS HydroSkin 0.5mm, best $30 on this list for 39\u201346\u00b0F mornings', url: 'https://www.amazon.com/s?k=nrs+hydroskin+wetsocks' },
+      { t: 'Camp shoes \u2014 Crocs. No shame at a campground.', url: 'https://www.amazon.com/s?k=crocs+classic+clog' }
+    ]},
+    { cat: 'Fishing gear \u2014 already owned', items: [
+      { t: 'Orvis Clearwater fly rod outfit, 9\'0" 5wt, 4pc', owned: true },
+      { t: 'Spinning REEL only (off the GX2) + spooled Spiderwire \u2014 carry-on. The one-piece 7\' rod stays home; it can\u2019t fly.', owned: true },
+      { t: 'Fly box, 120pc dry/wet assortment', owned: true },
+      { t: 'Trout Magnet 82pc TNT kit', owned: true },
+      { t: 'Trout spinner lures, 10pk', owned: true },
+      { t: 'Blue Fox Classic Vibrax spinner', owned: true },
+      { t: 'Fishing swivels kit, 190pc', owned: true },
+      { t: 'Spiderwire Stealth braided line, 10lb/125yd', owned: true },
+      { t: 'Osprey Sportlite 20L pack', owned: true },
+      { t: 'Wading belt', owned: true }
+    ]},
+    { cat: 'Fishing gear \u2014 still needed', items: [
+      { t: '2-piece spinning rod, 7\' medium \u2014 buy in Bozeman (~$40, e.g. Ugly Stik GX2 2pc). Your reel + braid clamp right on.', url: 'https://www.sportsmans.com/search?q=ugly+stik+gx2+spinning+rod' },
+      { t: 'Landing net \u2014 rubber mesh REQUIRED for catch-and-release. Fishpond Nomad if nice, ~$30 rubber-bag net works identically', url: 'https://www.amazon.com/s?k=rubber+mesh+fly+fishing+landing+net' },
+      { t: 'Extra tippet/leader spools \u2014 RIO or Scientific Anglers, 4X + 5X', url: 'https://www.amazon.com/s?k=rio+tippet+4x+5x' }
+    ]},
+    { cat: 'Health / comfort', items: [
+      { t: 'Bear spray \u2014 Counter Assault or UDAP, buy TWO in Bozeman for a group of 4. Cannot fly with it.', url: 'https://www.sportsmans.com/search?q=bear+spray' },
+      { t: 'Headlamp \u2014 e.g. Black Diamond Spot or Petzl Actik, one per person', url: 'https://www.rei.com/search?q=headlamp' },
+      'Sunscreen, SPF lip balm (high UV all week)',
+      'Ibuprofen / electrolyte packets',
+      'First aid basics',
+      'Earplugs / eye mask'
+    ]}
+  ];
+
+  var wildlifeData = [
+    { name: 'Bison', dist: '25 yd min', img: 'https://npgallery.nps.gov/GetAsset/66e90f75-e0a3-4445-89a2-0239e4d92712/proxymdres.jpg', credit: 'NPS / Janine Waller \u2014 Bison herd, Hayden Valley',
+      body: 'Hayden Valley and Lamar Valley, best on your Day 5 loop. August is peak rut \u2014 bulls bellowing and fighting for breeding rights. Go early morning; noon\u2013dusk brings multi-hour "bison jams" in the Canyon area. Bison can run 35 mph despite looking slow \u2014 never approach for a photo.' },
+    { name: 'Grizzly & black bears', dist: '100 yd min', body: 'Lamar and Hayden valleys, and the meadows between Tower-Roosevelt and Canyon. Most active dawn and dusk. Carry bear spray everywhere, including on short walks \u2014 all of Yellowstone is bear country.' },
+    { name: 'Wolves', dist: '100 yd min', img: 'https://npgallery.nps.gov/GetAsset/78ff20a8-2a14-47fd-9b8e-fb21debebb11/proxyhires.jpg', credit: 'NPS Photo \u2014 Rose Creek wolf pack, Lamar Valley',
+      body: 'Lamar Valley, nicknamed the "American Serengeti," is the best wolf-watching location in the park. The Junction Butte and Lamar Canyon packs are the ones spotting-scope regulars look for. Dawn and dusk, binoculars or a scope help since sightings are usually distant.' },
+    { name: 'Elk', dist: '25 yd min', body: 'Mammoth Hot Springs has elk grazing on the lawns nearly year-round \u2014 you\u2019ll likely see them on Day 8. Also common along the Madison River corridor. Give extra room around calves.' },
+    { name: 'Moose', dist: '25 yd min', img: 'https://npgallery.nps.gov/GetAsset/e87ad4aa-8960-4310-975c-c74cd50d0997/proxymdres.jpg', credit: 'NPS / Jim Peaco \u2014 bull moose',
+      body: 'Grand Teton side: Oxbow Bend, Willow Flats near Jackson Lake Lodge, and the beaver ponds around Schwabacher Landing. Best odds early morning or evening.' },
+    { name: 'Pronghorn', dist: '25 yd min', body: 'Antelope Flats near Mormon Row, and open sagebrush in Lamar Valley. North America\u2019s fastest land mammal \u2014 can hit 55 mph.' },
+    { name: 'Bald eagles & osprey', dist: '25 yd min', body: 'Along the Yellowstone, Madison, and Snake Rivers \u2014 you\u2019ll likely spot both just from the riverbanks while fishing.' }
+  ];
+
+  var geyserData = [
+    { name: 'Average interval', fact: '~90 minutes, ranging 50\u2013127 minutes. Longer eruptions mean a longer wait for the next one.',
+      img: 'https://npgallery.nps.gov/GetAsset/dc3574c9-1dd8-b71b-0b60-3ce8d590f005/proxymdres.jpg', credit: 'NPS / Jim Peaco \u2014 Old Faithful eruption' },
+    { name: 'Eruption', fact: '1.5\u20135 minutes, reaching 106\u2013184 feet, expelling 3,700\u20138,400 gallons of boiling water.' },
+    { name: 'Named', fact: 'By the 1870 Washburn Expedition, for its unusually consistent performance \u2014 it\u2019s still one of the most predictable geysers on Earth.' }
+  ];
+
+  var suntimes = [
+    { date: 'Sun Aug 2', sunrise: '6:12 AM', sunset: '8:47 PM' },
+    { date: 'Mon Aug 3', sunrise: '6:13 AM', sunset: '8:46 PM' },
+    { date: 'Tue Aug 4', sunrise: '6:14 AM', sunset: '8:45 PM' },
+    { date: 'Wed Aug 5', sunrise: '6:16 AM', sunset: '8:43 PM' },
+    { date: 'Thu Aug 6', sunrise: '6:17 AM', sunset: '8:42 PM' },
+    { date: 'Fri Aug 7', sunrise: '6:18 AM', sunset: '8:41 PM' },
+    { date: 'Sat Aug 8', sunrise: '6:19 AM', sunset: '8:39 PM' },
+    { date: 'Sun Aug 9', sunrise: '6:20 AM', sunset: '8:38 PM' }
+  ];
+
+  var triviaData = [
+    { name: 'Grand Prismatic Spring', fact: 'The largest hot spring in the US \u2014 about 200\u2013330 ft in diameter and over 121 ft deep. Its rainbow color comes from heat-loving microorganisms (thermophiles), not minerals.',
+      img: 'https://npgallery.nps.gov/GetAsset/3cd0b5e3-1dd8-b71b-0b65-81ad308bc259/proxymdres.jpg', credit: 'NPS / Jim Peaco \u2014 aerial view, Grand Prismatic Spring' },
+    { name: 'Grand Canyon of the Yellowstone', fact: 'The Lower Falls drop 308 feet \u2014 nearly twice the height of Niagara Falls. Carved by the river after the last caldera eruption weakened the volcanic rock.' },
+    { name: 'Yellowstone caldera', fact: 'The supervolcano beneath the park is roughly 30 by 45 miles \u2014 you\u2019ve been driving around inside it most of this trip.' },
+    { name: 'Mormon Row', fact: 'Homesteaded by Mormon settlers in the 1890s. The Moulton barns (two brothers, adjacent plots) are the most photographed structures in Grand Teton.' },
+    { name: 'Snake River Overlook', fact: 'Where Ansel Adams shot his famous 1942 Teton Range photograph \u2014 the view has changed slightly as trees have grown in since then.' },
+    { name: 'Roosevelt Arch', fact: 'Dedicated 1903, cornerstone laid by Theodore Roosevelt himself. Inscription reads "For the Benefit and Enjoyment of the People."' }
+  ];
+
+  var mealsData = [
+    { day: 'Day 1 \u00b7 Bozeman', title: 'J.W. Heist Steakhouse (booked, 7:30 PM)', body: 'Dinner\u2019s handled. Use the afternoon for the big grocery shop \u2014 hit the list below at one store and be done with it.' },
+    { day: 'Day 2 \u00b7 Gardiner', title: 'Smash burger night', body: 'Cast iron on the grate, thin patties, seared hard. American cheese, grilled onions, potato buns. First-night morale food with a 15-minute cleanup.' },
+    { day: 'Day 3 \u00b7 Madison', title: 'Bison brats + charred peppers & onions', body: 'Bison bratwursts from the Bozeman shop \u2014 the regional move. Brats over flame, peppers and onions in the cast iron, good mustard, brioche rolls.' },
+    { day: 'Day 4 \u00b7 Grant Village', title: 'Fajita night', body: 'Chicken thighs and skirt steak, sliced peppers and onions, tortillas warmed on the grate, lime, cotija if you found it. Fast, loud, feeds four hungry hikers.' },
+    { day: 'Day 5 \u00b7 Grant Village', title: 'Ribeye night', body: 'The centerpiece dinner. Ribeyes seared in cast iron with butter, foil-packet potatoes in the coals, grilled corn. Buy the steaks in Bozeman, keep them in deep-storage cooler until tonight.' },
+    { day: 'Day 6 \u00b7 Flagg Ranch', title: 'Carne asada tacos', body: 'The marinated flank steak (it\u2019s been soaking since Bozeman \u2014 citrus, garlic, cumin). Char it, slice thin, corn tortillas, onion-cilantro, lime. Best meal of the trip for $20.' },
+    { day: 'Day 7 \u00b7 Jackson', title: 'Town night \u2014 eat out in Jackson', body: 'You\u2019re in Jackson on a Saturday evening after a UTV tour. Don\u2019t cook. Options within a block of the square: Local (steaks), Hand Fire Pizza (in an old theater), Snake River Brewing. Restock groceries at Albertsons before heading back.' },
+    { day: 'Day 8 \u00b7 Gardiner', title: 'Easy night: pizza in town', body: 'After the 4.5-hour drive, nobody wants dishes. Yellowstone Pizza Company or Iron Horse in Gardiner, then pack the rig for the morning.' },
+    { day: 'Bonus \u00b7 any night', title: 'Trout dinner (conditional)', body: 'Yellowstone\u2019s native cutthroat are catch-and-release by law \u2014 don\u2019t plan on eating those. But if someone lands a lake trout from Yellowstone Lake, regulations REQUIRE killing it (invasive). Butter, lemon, foil, coals. Bonus meal, not the plan.' }
+  ];
+
+  var mealSystemData = [
+    { name: 'Breakfasts \u2014 two modes', fact: 'Fishing mornings (early out): overnight oats made the night before + protein bars, eat streamside. Camp mornings: eggs + bacon + tortillas in the cast iron. Coffee both ways \u2014 bring the AeroPress or a pour-over cone, don\u2019t rely on gas-station coffee.' },
+    { name: 'Lunches \u2014 build-your-own wrap station', fact: 'Tortillas, deli turkey and ham, cheese slices, mustard packets \u2014 assembled at camp in the morning, thrown in daypacks. Backed by jerky, trail mix, apples, and string cheese. No midday cooking, ever \u2014 lunch happens wherever the fish are.' },
+    { name: 'Camp kitchen essentials', fact: '12" cast iron skillet, one pot, tongs, spatula, chef\u2019s knife, small cutting board, foil (lots), paper towels, trash bags, dish soap + sponge, propane for the stove. Cooler rule: deep-storage cooler opens ONCE a day.' },
+    { name: 'Power reality: Days 3\u20135 are dry camping', fact: 'Madison and Grant Village are NPS campgrounds \u2014 no electric hookups. You\u2019re on the RV house battery plus limited generator hours. Charge everything while driving (12V adapters), top up power banks on hookup nights (Days 2, 6\u20138), and treat the fridge door like the cooler: open less, stay cold.' },
+    { name: 'Bear rules apply to food', fact: 'Everything with a scent \u2014 food, coolers, trash, even toothpaste \u2014 goes in the rig or a bear box when not in use. Never in tents, never left out. This is federal law in both parks and it\u2019s enforced.' }
+  ];
+
+  var groceryData = [
+    { cat: 'Proteins (Bozeman \u2014 deep-storage cooler)', items: [
+      { t: '3 lb ground beef 80/20 (smash burgers)', est: 18 },
+      { t: '8 bison bratwursts', est: 28 },
+      { t: '4 ribeyes, 1"+ thick', est: 72 },
+      { t: '2 lb flank steak (marinate day-of in a zip bag)', est: 26 },
+      { t: '2 lb chicken thighs, boneless', est: 10 },
+      { t: '1 lb skirt steak (fajitas)', est: 14 },
+      { t: '2 lb bacon', est: 14 },
+      { t: '2 dozen eggs', est: 8 },
+      { t: '1 lb deli turkey + 1 lb deli ham', est: 18 },
+      { t: 'Beef jerky, 3\u20134 bags', est: 25 },
+      { t: 'String cheese, 2 packs', est: 8 }
+    ]},
+    { cat: 'Produce', items: [
+      { t: '4 bell peppers + 4 yellow onions', est: 9 },
+      { t: '2 red onions + 1 bunch cilantro (tacos)', est: 4 },
+      { t: '6 limes', est: 3 },
+      { t: '8 apples + bananas for day 1\u20133', est: 10 },
+      { t: '4 russet potatoes (foil packets)', est: 4 },
+      { t: '4 ears corn', est: 4 },
+      { t: 'Bagged salad x2 (eat early, it won\u2019t last)', est: 8 },
+      { t: '1 head garlic', est: 1 }
+    ]},
+    { cat: 'Dry goods & pantry', items: [
+      { t: 'Potato buns (8) + brioche brat rolls (8)', est: 10 },
+      { t: 'Flour tortillas (20) + corn tortillas (24)', est: 10 },
+      { t: 'Old-fashioned oats + cinnamon (overnight oats)', est: 6 },
+      { t: 'Trail mix, 2 big bags', est: 18 },
+      { t: 'Protein bars, box of 12', est: 22 },
+      { t: 'Salt, pepper, cumin, chili powder, garlic powder', est: 12 },
+      { t: 'Olive oil (small) + butter', est: 10 },
+      { t: 'Mustard, ketchup, hot sauce', est: 9 },
+      { t: 'Coffee + filters/AeroPress', est: 15 },
+      { t: 'Peanut butter (streamside emergency fuel)', est: 5 }
+    ]},
+    { cat: 'Dairy & cold', items: [
+      { t: 'American cheese slices + shredded Mexican blend', est: 10 },
+      { t: 'Cotija (if the store has it)', est: 6 },
+      { t: 'Milk or oat milk (oats + coffee)', est: 5 },
+      { t: 'Greek yogurt, 4-pack (overnight oats base)', est: 6 }
+    ]},
+    { cat: 'Drinks & ice', items: [
+      { t: 'Water: 2 cases + refill jugs (drought summer, 90\u00b0 days \u2014 overbuy)', est: 16 },
+      { t: 'Electrolyte packets (Liquid IV or similar)', est: 22 },
+      { t: 'Sodas / sparkling water per crew preference', est: 18 },
+      { t: 'Ice: 4 bags Day 1, then rebuy at every stop \u2014 cheapest insurance on the trip', est: 30 }
+    ]},
+    { cat: 'Camp kitchen (if not already packed)', items: [
+      { t: '12" cast iron skillet', est: 27 },
+      { t: 'Heavy-duty foil, 2 rolls', est: 12 },
+      { t: 'Zip bags (gallon) \u2014 marinades + leftovers', est: 6 },
+      { t: 'Paper towels x4, trash bags, dish kit', est: 22 },
+      { t: 'Propane canisters for the stove', est: 15 }
+    ]},
+    { cat: 'RV gaps \u2014 rentals don\u2019t include these (check your kit list first)', items: [
+      { t: 'Power banks \u2014 1 per person, 20,000 mAh (e.g. Anker) \u2014 Days 3\u20135 have NO hookups', est: 140 },
+      { t: '12V USB car adapters x2 \u2014 charge while driving, the most reliable power on dry-camp days', est: 20 },
+      { t: 'Camp chairs x4 \u2014 rentals almost never include them', est: 100 },
+      { t: 'Lantern for the picnic table (headlamps don\u2019t light a card game)', est: 25 },
+      { t: 'Bedding/sleeping bags \u2014 rental \u201cpersonal kits\u201d run $60\u2013110/person; packed sleeping bags are free', est: 0 },
+      { t: 'Towels + one quick-dry towel each (hot springs + showers)', est: 35 },
+      { t: 'Lighter x2 + matches (waterproof case)', est: 8 },
+      { t: 'Firewood \u2014 buy AT each campground, never transport (invasive species rules). Check fire restrictions daily; region at preparedness level 5.', est: 50 },
+      { t: 'Surge protector for 30-amp hookup nights \u2014 rentals rarely include one', est: 60 },
+      { t: 'Basic tool kit + duct tape + zip ties', est: 25 },
+      { t: 'Bug spray (picaridin or DEET) \u2014 Fairy Falls area is notoriously mosquito-heavy', est: 10 },
+      { t: 'Clothesline + clips \u2014 wet-wading means wet gear every day', est: 8 }
+    ]}
+  ];
+
+  var conditionsData = [
+    { group: 'Fishing closures (affects Day 3, Madison Campground)',
+      note: 'Effective July 9, 2026, and still in force as of Aug 1: the Madison River, Firehole River, and Gibbon River (below Norris) close to fishing daily 2 PM to sunrise, due to water temps exceeding 68\u00b0F and low flows. Yellowstone Lake and other lakes remain open sunrise to sunset regardless. The Yellowstone River mainstem at Buffalo Ford/LeHardy Rapids is not on the closed list.',
+      cards: [
+        { name: 'Official NPS closure notice', desc: 'Which rivers, why, and when it lifts.', url: 'https://www.nps.gov/yell/learn/news/26015.htm' },
+        { name: 'Current park alerts', desc: 'Check for updates before you fish.', url: 'https://www.nps.gov/yell/planyourvisit/conditions.htm' }
+      ] },
+    { group: 'Yellowstone River water data (Gardiner corridor)',
+      note: 'USGS gauge at Corwin Springs, 7.5 miles from Gardiner: water temp 71\u00b0F (21.6\u00b0C) and discharge 2,920 cfs as of Aug 1, versus a 120-year median of 4,000 cfs for this date \u2014 below the 25th percentile. Warm and low for the season; fish early, land fish quickly.',
+      cards: [
+        { name: 'Live USGS gauge data', desc: 'Corwin Springs streamgage, updated continuously.', url: 'https://waterdata.usgs.gov/monitoring-location/USGS-06191500/' }
+      ] },
+    { group: 'Weather, Aug 2\u20139 (Yellowstone corridor)',
+      note: 'Hot and dry: highs mostly 86\u201393\u00b0F, lows 44\u201353\u00b0F, high UV most days. Rain stays under 15% most days, with bumps to 46% on Aug 4 (Grant Village) and 52% thunderstorms on Aug 9 (the long drive day) \u2014 keep rain gear reachable those two days.',
+      cards: [
+        { name: 'West Yellowstone extended forecast', desc: '14-day outlook, elevation-representative for Gardiner/Madison/Grant.', url: 'https://www.timeanddate.com/weather/usa/west-yellowstone/ext' }
+      ] },
+    { group: 'Weather, Jackson / Moran corridor',
+      note: 'A Heat Advisory was in effect July 31 with highs near 87\u00b0F. Expect the same hot-day, cool-night pattern as the Yellowstone corridor through Flagg Ranch and Gros Ventre.',
+      cards: [
+        { name: 'Jackson, WY forecast (AccuWeather)', desc: 'Check closer to your Flagg Ranch / Gros Ventre dates.', url: 'https://www.accuweather.com/en/us/jackson/83001/weather-forecast/336564' }
+      ] },
+    { group: 'Drought and fire risk',
+      note: 'Extreme drought expanded across central Wyoming and much of western Montana through late July 2026; roughly 48% of the Lower 48 states were in drought as of July 28. Montana\u2019s overall fire risk is elevated (national preparedness level 5). No active fire was reported inside Yellowstone\u2019s boundary at last check, but regional smoke has triggered air-quality alerts in nearby counties this season \u2014 worth a same-day check, not an assumption.',
+      cards: [
+        { name: 'National drought conditions', desc: 'Updated weekly.', url: 'https://www.drought.gov/current-conditions' },
+        { name: 'Yellowstone current fire activity', desc: 'Official park fire status.', url: 'https://www.nps.gov/yell/learn/management/current-fire-activity.htm' },
+        { name: 'AirNow fire and smoke map', desc: 'Real-time air quality, useful if smoke rolls in.', url: 'https://fire.airnow.gov/' }
+      ] },
+    { group: 'Fishing reports',
+      note: 'General reports describe good terrestrial (hopper) fishing on the Yellowstone River through August, Lamar/Slough/Soda Butte in decent shape, and PMD/caddis hatches on the Firehole-Madison system during the open morning window before the 2 PM cutoff. Snake River tailwater below Jackson Lake Dam is dam-regulated and less exposed to this heat pattern.',
+      cards: [
+        { name: 'Yellowstone Angler fishing report', desc: 'Weekly, park-specific.', url: 'https://www.yellowstoneangler.com/pages/yellowstone-national-park-fishing-report' },
+        { name: 'Big Sky Anglers YNP report', desc: 'Alternative weekly report.', url: 'https://bigskyanglers.com/blogs/ynp-report' }
+      ] }
+  ];
+
+  var resourcesData = [
+    { group: 'Landmarks added to the route',
+      note: 'Everything below is now folded into the day-by-day cards. Direct links here for quick reference.',
+      cards: [
+        { name: 'Roosevelt Arch + Yellowstone Hot Springs', desc: 'Day 2, Gardiner. Boiling River is permanently closed since the 2022 floods \u2014 this commercial soak is the real alternative.', url: 'https://yellowstonehotspringsmt.com/' },
+        { name: 'Hayden Valley + Grand Canyon of the Yellowstone', desc: 'Day 5, full loop from Grant Village via Fishing Bridge/Canyon Village.', url: 'https://www.nps.gov/places/000/grand-canyon-of-the-yellowstone-artist-point.htm' },
+        { name: 'Oxbow Bend', desc: 'Day 6, a few minutes from Flagg Ranch toward Moran Junction.', url: 'https://www.nps.gov/grte/index.htm' },
+        { name: 'Mormon Row, Schwabacher Landing, Snake River Overlook', desc: 'Day 7, all close together near Jackson/Gros Ventre.', url: 'https://www.nps.gov/places/000/snake-river-overlook.htm' },
+        { name: 'Norris Geyser Basin + Mammoth Hot Springs', desc: 'Day 8, on the direct Jackson-to-Gardiner return route.', url: 'https://www.nps.gov/yell/planyourvisit/norrisplan.htm' }
+      ] },
+    { group: 'Fishing licenses', note: 'Three separate systems, no overlap. Buy each online before you leave home \u2014 cell service inside the parks is unreliable.',
+      cards: [
+        { name: 'Montana (Gardiner, Madison area)', desc: 'Online-only as of March 2026. Conservation License + AIS pass + base license.', url: 'https://fwp.mt.gov/buyandapply/fishinglicenses' },
+        { name: 'Wyoming (Flagg Ranch, Jackson, Elk Refuge)', desc: 'State system, separate from the YNP permit. Not valid inside Yellowstone.', url: 'https://wgfapps.wyo.gov/elso/ELSOWelcome.aspx' },
+        { name: 'Yellowstone National Park permit', desc: 'Required inside YNP (Madison, Grant Village, Lewis Lake). State licenses not valid here.', url: 'https://www.nps.gov/yell/planyourvisit/fishing.htm' },
+        { name: 'Buy the YNP permit', desc: 'Purchased through Recreation.gov.', url: 'https://www.recreation.gov/' }
+      ] },
+    { group: 'Gear still needed', note: 'Wet-wading confirmed \u2014 no waders needed. Amazon link for reference \u2014 buying in person at a Bozeman shop on 8/2 avoids any shipping risk.',
+      cards: [
+        { name: 'PLUSINNO folding landing net', desc: 'Rubber mesh, telescopic handle, clips to a pack.', url: 'https://www.amazon.com/PLUSINNO-Fishing-Landing-Rubber-Release/dp/B08WWYMYD5' },
+        { name: 'Counter Assault bear spray', desc: 'Cannot fly with this \u2014 buy locally in Bozeman instead of shipping.', url: 'https://www.amazon.com/Counter-Assault-Bear-Spray/dp/B07Q69Z89L' }
+      ] },
+    { group: 'Bozeman shops (in-person, 8/2)', note: 'One-stop options if you\u2019d rather see gear in hand than order ahead.',
+      cards: [
+        { name: 'Sportsman\u2019s Warehouse', desc: 'Waders, bear spray, general outdoor gear under one roof.', url: 'https://stores.sportsmans.com/sportsmans-warehouse/us/mt/bozeman/2214-tschache-lane' },
+        { name: 'Yellow Dog Flyfishing', desc: 'Local fly shop, current river reports, flies and terminal tackle.', url: 'https://www.yellowdogflyfishing.com/pages/yellow-dog-fly-shop' }
+      ] },
+    { group: 'Snake River Canyon rafting (unconfirmed)', note: 'Two established Jackson operators \u2014 pick one and lock in a Friday 8/7 slot.',
+      cards: [
+        { name: 'Dave Hansen Whitewater', desc: 'Class II\u2013III, 8 miles, since 1967, daily trips mid-May through late September.', url: 'https://www.davehansenwhitewater.com/' },
+        { name: 'Mad River Boat Trips', desc: 'Alternative operator, similar Class II\u2013III run.', url: 'https://www.mad-river.com/' }
+      ] },
+    { group: 'Around Grant Village / West Yellowstone', note: 'Non-fishing fill for the stationary day(s) at Grant, or stops on the long Sunday drive.',
+      cards: [
+        { name: 'Old Faithful area guide', desc: 'Eruption predictions, boardwalk map, visitor center info.', url: 'https://www.nps.gov/yell/planyourvisit/exploreoldfaithful.htm' },
+        { name: 'Grand Prismatic overlook trail', desc: 'Short hike above Midway Geyser Basin, best photo angle on the spring.', url: 'https://www.nps.gov/thingstodo/yell-trail-grand-prismatic-overlook.htm' }
+      ] },
+    { group: 'Around Jackson', note: 'Saturday 8/8, after the UTV tour or in the evening.',
+      cards: [
+        { name: 'Flat Creek fishing rules', desc: 'National Elk Refuge, fly-only, opens Aug 1, Wyoming license required.', url: 'https://www.fws.gov/refuge/national-elk/visit-us/activities/fishing' }
+      ] },
+    { group: 'Bozeman dining', note: 'Sunday 8/2 dinner, already booked.',
+      cards: [
+        { name: 'J.W. Heist Steakhouse', desc: '27 E Main St, Bozeman. Reservation 7:30 PM.', url: 'https://jwheist.com/' }
+      ] }
+  ];
+
+  function elevToY(elev) {
+    var min = 4800, max = 7800, yTop = 40, yBottom = 200;
+    var frac = (elev - min) / (max - min);
+    return yBottom - frac * (yBottom - yTop);
+  }
+
+  function buildRoute() {
+    var xStep = 1080 / (stops.length - 1);
+    var pts = [];
+    stops.forEach(function(s, i) {
+      s._x = 60 + i * xStep;
+      s._y = elevToY(s.elev);
+      pts.push(s._x + ',' + s._y);
+    });
+    root.querySelector('#route-line').setAttribute('points', pts.join(' '));
+
+    stops.forEach(function(s) {
+      var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'route-stop');
+      g.setAttribute('data-day', s.day);
+
+      var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('class', 'dot');
+      circle.setAttribute('cx', s._x);
+      circle.setAttribute('cy', s._y);
+      circle.setAttribute('r', 10);
+      circle.setAttribute('fill', '#A9572B');
+      circle.setAttribute('stroke', '#FBF6EA');
+      circle.setAttribute('stroke-width', '2.5');
+      g.appendChild(circle);
+
+      var num = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      num.setAttribute('x', s._x);
+      num.setAttribute('y', s._y + 4);
+      num.setAttribute('text-anchor', 'middle');
+      num.setAttribute('font-size', '10');
+      num.setAttribute('font-family', 'JetBrains Mono, monospace');
+      num.setAttribute('fill', '#FBF6EA');
+      num.setAttribute('font-weight', '500');
+      num.textContent = s.day;
+      g.appendChild(num);
+
+      var name = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      name.setAttribute('x', s._x);
+      name.setAttribute('y', s._y + 26);
+      name.setAttribute('text-anchor', 'middle');
+      name.setAttribute('font-size', '11.5');
+      name.setAttribute('font-family', 'Fraunces, serif');
+      name.setAttribute('font-weight', '600');
+      name.setAttribute('fill', '#26392C');
+      name.textContent = s.loc.length > 16 ? s.loc.slice(0,14) + '\u2026' : s.loc;
+      g.appendChild(name);
+
+      var el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      el.setAttribute('x', s._x);
+      el.setAttribute('y', s._y + 40);
+      el.setAttribute('text-anchor', 'middle');
+      el.setAttribute('font-size', '10');
+      el.setAttribute('font-family', 'JetBrains Mono, monospace');
+      el.setAttribute('fill', '#5B5548');
+      el.textContent = s.elev.toLocaleString() + ' ft';
+      g.appendChild(el);
+
+      g.addEventListener('click', function() {
+        switchTab('itinerary');
+        var card = document.querySelector('.day-card[data-day="' + s.day + '"]');
+        if (card) {
+          card.classList.add('open');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('flash');
+          setTimeout(function() { card.classList.remove('flash'); }, 900);
+        }
+      });
+
+      root.querySelector('.route-svg-wrap svg').appendChild(g);
+    });
+  }
+
+  function buildItinerary() {
+    var list = root.querySelector('#itinerary-list');
+    stops.forEach(function(s) {
+      var card = document.createElement('div');
+      card.className = 'day-card';
+      card.setAttribute('data-day', s.day);
+
+      var badgeClass = s.status === 'confirmed' ? 'confirmed' : 'needed';
+      var badgeText = s.status === 'confirmed' ? 'Confirmed' : 'Needs booking';
+
+      var linksHtml = '';
+      if (s.links && s.links.length) {
+        linksHtml = '<div class="link-row">' + s.links.map(function(l) {
+          return '<a class="link-chip" href="' + l.url + '" target="_blank" rel="noopener">' + l.label + '</a>';
+        }).join('') + '</div>';
+      }
+
+      var heroHtml = '';
+      if (s.hero) {
+        heroHtml = '<img class="day-hero" src="' + s.hero + '" alt="' + s.loc + '" loading="lazy">' +
+                   '<div class="day-hero-credit">' + s.heroCredit + '</div>';
+      }
+
+      card.innerHTML =
+        '<div class="day-head">' +
+          '<div class="day-num">' + s.day + '</div>' +
+          '<div class="day-meta">' +
+            '<div class="day-date">' + s.date + '</div>' +
+            '<div class="day-loc">' + s.loc + (s.sub ? ' <span style="font-weight:400;font-size:13px;color:var(--ink-soft);">&middot; ' + s.sub + '</span>' : '') + '</div>' +
+          '</div>' +
+          '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+          '<span class="chev">&#9656;</span>' +
+        '</div>' +
+        '<div class="day-body">' + heroHtml + '<div class="day-body-inner">' +
+          (s.guide ? '<div class="guide-note">' + s.guide + '</div>' : '') +
+          '<ul>' +
+          s.lines.map(function(l) { return '<li>' + l + '</li>'; }).join('') +
+        '</ul>' +
+        (s.hikes ? '<div class="hikes-block"><p class="hikes-label">Suggested hikes</p><ul>' +
+          s.hikes.map(function(h) { return '<li>' + h + '</li>'; }).join('') + '</ul></div>' : '') +
+        linksHtml + '</div></div>';
+
+      card.querySelector('.day-head').addEventListener('click', function() {
+        card.classList.toggle('open');
+      });
+
+      list.appendChild(card);
+    });
+  }
+
+  function buildOpenItems(saved) {
+    var wrap = root.querySelector('#open-items');
+    wrap.innerHTML = '';
+    openItemsData.forEach(function(item) {
+      var done = saved && saved.indexOf(item.id) > -1;
+      var card = document.createElement('div');
+      card.className = 'alert-card' + (done ? ' done' : '');
+      card.innerHTML =
+        '<div class="alert-check" data-id="' + item.id + '"></div>' +
+        '<div><p class="alert-title">' + item.title + '</p><p class="alert-body">' + item.body + '</p></div>';
+      card.querySelector('.alert-check').addEventListener('click', function() {
+        card.classList.toggle('done');
+        saveOpenItems();
+      });
+      wrap.appendChild(card);
+    });
+  }
+
+  function saveOpenItems() {
+    var done = [];
+    root.querySelectorAll('.alert-card.done .alert-check').forEach(function(el) {
+      done.push(el.getAttribute('data-id'));
+    });
+    try {
+      if (window.storage) window.storage.set('trip-open-items', JSON.stringify(done), false);
+    } catch (e) {}
+  }
+
+  var startHighlights = [
+    { day: 'Day 5', body: 'Peak bison rut in Hayden Valley + Artist Point over the 308-ft Lower Falls \u2014 the single best sightseeing day of the trip. Go early; bison jams own the road noon\u2013dusk.' },
+    { day: 'Day 4', body: 'Grand Prismatic from the overlook trail (1.2 mi) + Old Faithful. The aerial-photo view, earned on foot.' },
+    { day: 'Day 6', body: 'Snake River tailwater \u2014 cold water all day, fine-spotted cutthroat that exist nowhere else, and Oxbow Bend minutes from camp.' },
+    { day: 'Day 7', body: 'UTV tour at 1 PM, Teton photo icons (Mormon Row, Schwabacher), Jackson town night. The everything day.' },
+    { day: 'Any dawn', body: 'Wolves in Lamar, moose at Oxbow, elk at Mammoth. Every marquee animal on this route is a dawn animal \u2014 the 6 AM alarm pays the whole trip.' }
+  ];
+
+  var startActions = [
+    { day: 'TONIGHT', body: 'Buy all three fishing licenses online (Montana + Wyoming + YNP permit \u2014 links in Day cards). Cell service in the parks is unreliable; don\u2019t bet the first fishing day on it.' },
+    { day: 'TONIGHT', body: 'Group text: who owns sleeping bags and camp chairs? Every packed bag saves $60\u2013110 in rental kit fees; every packed chair saves $25.' },
+    { day: 'UNCONFIRMED', body: 'Snake River rafting \u2014 the last open booking. If it\u2019s happening, lock a Friday 8/7 slot with Dave Hansen or Mad River now (links in Day 6).' },
+    { day: 'DAY 1', body: 'Sunday sequence is time-boxed: Sportsman\u2019s Warehouse closes 6 PM (bear spray, rod, net, tippet). Groceries stay open til 10. Gear first, food second.' },
+    { day: 'DAY 8 EVE', body: 'Fuel the RV and dump tanks Sunday NIGHT in Gardiner \u2014 the Monday-morning dump-station line is what blows the 7:30 AM departure and the 11:38 flight.' }
+  ];
+
+  var startAware = [
+    { day: 'FISHING', body: 'Madison, Firehole, and lower Gibbon closed to fishing 2 PM\u2013sunrise daily (water over 68\u00b0F). The Yellowstone mainstem and Snake tailwater are your reliable water. Natives are catch-and-release, period.' },
+    { day: 'HEAT + FIRE', body: 'Highs 86\u201393\u00b0F, extreme drought, regional preparedness level 5. Fire bans are likely at some point \u2014 check restrictions before lighting anything, every day.' },
+    { day: 'POWER', body: 'Days 3\u20135 (Madison + Grant \u00d72) have no hookups. Power banks charged, 12V adapters in the cab, fridge discipline.' },
+    { day: 'CONSTRUCTION', body: 'Grand Teton has significant road construction delays this season \u2014 pad the Day 6\u20137 drive times, especially near Jenny Lake.' },
+    { day: 'CLOSED', body: 'Boiling River soaking: permanently gone (2022 floods). Biscuit Basin / Mystic Falls: closed, second explosion June 13. The app routes around both \u2014 don\u2019t let anyone talk you back in.' },
+    { day: 'SIGNAL', body: 'Verizon is the trip carrier; AT&T is second (best at Canyon); T-Mobile is near-useless inside Yellowstone. Days 3 and 6 are dark nights (Madison, Flagg Ranch \u2014 no reliable signal at camp), and Hayden Valley + most driving stretches are dead zones. Download offline maps in Bozeman; texts beat calls everywhere in the park.' },
+    { day: 'DRONE', body: 'Drones are banned in Yellowstone, Grand Teton, AND the Rockefeller Parkway (your Flagg Ranch camp) \u2014 federal misdemeanor, up to $5,000 + 6 months, gear and memory card confiscated. Legal windows exist on National Forest land only \u2014 marked in Days 2, 7, and 8. Check B4UFLY before every launch.' },
+    { day: 'WILDLIFE', body: '100 yards from bears/wolves/cougars, 25 from everything else \u2014 federal law, not advice. Bear spray on every trail, reachable in 2 seconds.' }
+  ];
+
+  function buildStart() {
+    function fill(id, data, cls) {
+      var wrap = root.querySelector(id);
+      data.forEach(function(x) {
+        var card = document.createElement('div');
+        card.className = 'start-card' + (cls ? ' ' + cls : '');
+        card.innerHTML = '<span class="s-day">' + x.day + '</span><span class="s-body">' + x.body + '</span>';
+        wrap.appendChild(card);
+      });
+    }
+    fill('#start-highlights', startHighlights, '');
+    fill('#start-actions', startActions, 'action');
+    fill('#start-aware', startAware, 'warn');
+
+    var budget = root.querySelector('#start-budget');
+    var grand = 0;
+    groceryData.forEach(function(g) { g.items.forEach(function(it) { grand += (it.est || 0); }); });
+    budget.innerHTML =
+      '<div class="start-card"><span class="s-day">FOOD + RV</span><span class="s-body">Grocery, camp kitchen, and RV-gap shopping: <b>~$' + grand + '</b> group total ($' + Math.round(grand/4) + '/person). Full itemized list with per-category totals in the Meals tab.</span></div>' +
+      '<div class="start-card"><span class="s-day">GEAR</span><span class="s-body">Remaining fishing/safety gear (bear spray \u00d72, 2-pc rod, net, tippet, headlamps): <b>~$250</b>. Personal clothing (base layer, shell, river shoes, neoprene socks) varies \u2014 roughly $100\u2013250/person for whoever\u2019s starting from zero.</span></div>' +
+      '<div class="start-card"><span class="s-day">LICENSES</span><span class="s-body">Montana + Wyoming nonresident licenses + YNP permit: roughly <b>$60\u201390/person</b> depending on day counts.</span></div>';
+  }
+
+  function buildMeals() {
+    var mWrap = root.querySelector('#meals-list');
+    mealsData.forEach(function(m) {
+      var card = document.createElement('div');
+      card.className = 'wl-card';
+      card.innerHTML =
+        '<div class="wl-head"><span class="wl-name">' + m.title + '</span><span class="wl-dist">' + m.day + '</span></div>' +
+        '<p class="wl-body">' + m.body + '</p>';
+      mWrap.appendChild(card);
+    });
+    var sWrap = root.querySelector('#meals-system');
+    mealSystemData.forEach(function(g) {
+      var card = document.createElement('div');
+      card.className = 'trivia-card';
+      card.innerHTML = '<p class="t-name">' + g.name + '</p><p class="t-fact">' + g.fact + '</p>';
+      sWrap.appendChild(card);
+    });
+  }
+
+  function saveGrocery() {
+    var checked = [];
+    root.querySelectorAll('#grocery-list .pack-item.checked').forEach(function(el) {
+      checked.push(el.getAttribute('data-id'));
+    });
+    try {
+      if (window.storage) window.storage.set('trip-grocery-checklist', JSON.stringify(checked), false);
+    } catch (e) {}
+  }
+
+  function updateGroceryProgress() {
+    var all = root.querySelectorAll('#grocery-list .pack-item').length;
+    var done = root.querySelectorAll('#grocery-list .pack-item.checked').length;
+    var pct = all ? Math.round(done / all * 100) : 0;
+    root.querySelector('#grocery-progress-fill').style.width = pct + '%';
+    root.querySelector('#grocery-progress-label').textContent = done + ' / ' + all;
+  }
+
+  function buildGrocery(savedChecked) {
+    var wrap = root.querySelector('#grocery-list');
+    var idx = 0;
+    var grand = 0;
+    groceryData.forEach(function(group) {
+      var catDiv = document.createElement('div');
+      catDiv.className = 'pack-cat';
+      var subtotal = 0;
+      group.items.forEach(function(it) { subtotal += (it.est || 0); });
+      grand += subtotal;
+      var title = document.createElement('div');
+      title.className = 'pack-cat-title';
+      title.innerHTML = group.cat + ' <span class="cat-est">~$' + subtotal + '</span>';
+      catDiv.appendChild(title);
+      group.items.forEach(function(it) {
+        var text = typeof it === 'string' ? it : it.t;
+        var est = typeof it === 'object' ? it.est : null;
+        var id = 'g' + (idx++);
+        var row = document.createElement('div');
+        row.className = 'pack-item';
+        row.setAttribute('data-id', id);
+        if (savedChecked && savedChecked.indexOf(id) > -1) row.classList.add('checked');
+        var estHtml = (est !== null && est !== undefined) ? '<span class="item-est">' + (est === 0 ? '$0\u2013160' : '~$' + est) + '</span>' : '';
+        row.innerHTML = '<div class="pack-check"></div><span>' + text + '</span>' + estHtml;
+        row.addEventListener('click', function() {
+          row.classList.toggle('checked');
+          saveGrocery();
+          updateGroceryProgress();
+        });
+        catDiv.appendChild(row);
+      });
+      wrap.appendChild(catDiv);
+    });
+    var totalDiv = document.createElement('div');
+    totalDiv.className = 'grand-total';
+    totalDiv.innerHTML = 'Estimated total: <b>~$' + grand + '</b> for the group ($' + Math.round(grand / 4) + '/person) \u2014 plus $0\u2013160 more if buying sleeping bags instead of packing them. Estimates are Bozeman prices; in-park stores run 30\u201350% higher.';
+    wrap.appendChild(totalDiv);
+    updateGroceryProgress();
+  }
+
+  function buildPacking(savedChecked) {
+    var wrap = root.querySelector('#packing-list');
+    var idx = 0;
+    packingData.forEach(function(group) {
+      var catDiv = document.createElement('div');
+      catDiv.className = 'pack-cat';
+      var title = document.createElement('div');
+      title.className = 'pack-cat-title';
+      title.textContent = group.cat;
+      catDiv.appendChild(title);
+
+      group.items.forEach(function(raw) {
+        var text = typeof raw === 'string' ? raw : raw.t;
+        var owned = typeof raw === 'object' && raw.owned;
+        var url = typeof raw === 'object' && raw.url;
+        var id = 'p' + (idx++);
+        var row = document.createElement('div');
+        row.className = 'pack-item';
+        row.setAttribute('data-id', id);
+        if (savedChecked && savedChecked.indexOf(id) > -1) row.classList.add('checked');
+        var linkHtml = url ? ' <a class="pack-link" href="' + url + '" target="_blank" rel="noopener">shop&nbsp;\u2197</a>' : '';
+        row.innerHTML = '<div class="pack-check"></div><span>' + text + (owned ? '<span class="owned-tag">owned</span>' : '') + linkHtml + '</span>';
+        row.addEventListener('click', function(ev) {
+          if (ev.target.tagName === 'A') return;
+          row.classList.toggle('checked');
+          savePacking();
+          updateProgress();
+        });
+        catDiv.appendChild(row);
+      });
+      wrap.appendChild(catDiv);
+    });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var all = root.querySelectorAll('.pack-item');
+    var checked = root.querySelectorAll('.pack-item.checked');
+    var pct = all.length ? Math.round((checked.length / all.length) * 100) : 0;
+    root.querySelector('#pack-progress-fill').style.width = pct + '%';
+    root.querySelector('#pack-progress-num').textContent = checked.length + ' / ' + all.length;
+  }
+
+  function savePacking() {
+    var checked = [];
+    root.querySelectorAll('.pack-item.checked').forEach(function(el) {
+      checked.push(el.getAttribute('data-id'));
+    });
+    try {
+      if (window.storage) window.storage.set('trip-packing-checklist', JSON.stringify(checked), false);
+    } catch (e) {}
+  }
+
+  function buildWildlifeTab() {
+    var wlWrap = root.querySelector('#wildlife-list');
+    wildlifeData.forEach(function(w) {
+      var card = document.createElement('div');
+      card.className = 'wl-card';
+      var imgHtml = w.img ? '<img class="wl-img" src="' + w.img + '" alt="' + w.name + '" loading="lazy"><p class="wl-credit">' + w.credit + '</p>' : '';
+      card.innerHTML =
+        imgHtml +
+        '<div class="wl-head"><span class="wl-name">' + w.name + '</span><span class="wl-dist">' + w.dist + '</span></div>' +
+        '<p class="wl-body">' + w.body + '</p>';
+      wlWrap.appendChild(card);
+    });
+
+    var gWrap = root.querySelector('#geyser-list');
+    geyserData.forEach(function(g) {
+      var card = document.createElement('div');
+      card.className = 'trivia-card';
+      var imgHtml = g.img ? '<img class="wl-img" src="' + g.img + '" alt="' + g.name + '" loading="lazy"><p class="wl-credit">' + g.credit + '</p>' : '';
+      card.innerHTML = imgHtml + '<p class="t-name">' + g.name + '</p><p class="t-fact">' + g.fact + '</p>';
+      gWrap.appendChild(card);
+    });
+    var gLinkRow = document.createElement('div');
+    gLinkRow.className = 'link-row';
+    gLinkRow.innerHTML =
+      '<a class="link-chip" href="https://home.nps.gov/articles/old-faithful-geyser.htm" target="_blank" rel="noopener">Live webcam + predictions</a>';
+    gWrap.appendChild(gLinkRow);
+
+    var sunWrap = root.querySelector('#suntimes-table');
+    var table = document.createElement('table');
+    table.className = 'sun-table';
+    table.innerHTML = '<tr><th>Date</th><th>Sunrise</th><th>Sunset</th></tr>' +
+      suntimes.map(function(s) { return '<tr><td>' + s.date + '</td><td>' + s.sunrise + '</td><td>' + s.sunset + '</td></tr>'; }).join('');
+    sunWrap.appendChild(table);
+
+    var tWrap = root.querySelector('#trivia-list');
+    triviaData.forEach(function(t) {
+      var card = document.createElement('div');
+      card.className = 'trivia-card';
+      var imgHtml = t.img ? '<img class="wl-img" src="' + t.img + '" alt="' + t.name + '" loading="lazy"><p class="wl-credit">' + t.credit + '</p>' : '';
+      card.innerHTML = imgHtml + '<p class="t-name">' + t.name + '</p><p class="t-fact">' + t.fact + '</p>';
+      tWrap.appendChild(card);
+    });
+  }
+
+  function buildGroupList(data, wrap) {
+    data.forEach(function(group) {
+      var g = document.createElement('div');
+      g.className = 'res-group';
+      var title = document.createElement('div');
+      title.className = 'res-group-title';
+      title.textContent = group.group;
+      g.appendChild(title);
+      var note = document.createElement('div');
+      note.className = 'res-group-note';
+      note.textContent = group.note;
+      g.appendChild(note);
+      group.cards.forEach(function(c) {
+        var card = document.createElement('div');
+        card.className = 'res-card';
+        card.innerHTML =
+          '<div><div class="res-name">' + c.name + '</div><div class="res-desc">' + c.desc + '</div></div>' +
+          '<a class="res-link" href="' + c.url + '" target="_blank" rel="noopener">Open</a>';
+        g.appendChild(card);
+      });
+      wrap.appendChild(g);
+    });
+  }
+
+  function buildConditions() {
+    buildGroupList(conditionsData, root.querySelector('#conditions-list'));
+  }
+
+  function buildResources() {
+    var wrap = root.querySelector('#resources-list');
+    resourcesData.forEach(function(group) {
+      var g = document.createElement('div');
+      g.className = 'res-group';
+      var title = document.createElement('div');
+      title.className = 'res-group-title';
+      title.textContent = group.group;
+      g.appendChild(title);
+      var note = document.createElement('div');
+      note.className = 'res-group-note';
+      note.textContent = group.note;
+      g.appendChild(note);
+      group.cards.forEach(function(c) {
+        var card = document.createElement('div');
+        card.className = 'res-card';
+        card.innerHTML =
+          '<div><div class="res-name">' + c.name + '</div><div class="res-desc">' + c.desc + '</div></div>' +
+          '<a class="res-link" href="' + c.url + '" target="_blank" rel="noopener">Open</a>';
+        g.appendChild(card);
+      });
+      wrap.appendChild(g);
+    });
+  }
+
+  function switchTab(name) {
+    root.querySelectorAll('nav.tabs button').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-tab') === name);
+    });
+    root.querySelectorAll('.panel').forEach(function(p) {
+      p.classList.toggle('active', p.id === 'panel-' + name);
+    });
+  }
+
+  root.querySelectorAll('nav.tabs button').forEach(function(b) {
+    b.addEventListener('click', function() { switchTab(b.getAttribute('data-tab')); });
+  });
+
+  buildRoute();
+  buildItinerary();
+  buildConditions();
+  buildWildlifeTab();
+  buildStart();
+  buildMeals();
+  buildResources();
+
+  var savedPacking = [];
+  var savedOpenItems = [];
+  var savedGrocery = [];
+
+  async function init() {
+    try {
+      if (window.storage) {
+        try {
+          var r1 = await window.storage.get('trip-packing-checklist', false);
+          if (r1 && r1.value) savedPacking = JSON.parse(r1.value);
+        } catch (e) {}
+        try {
+          var r2 = await window.storage.get('trip-open-items', false);
+          if (r2 && r2.value) savedOpenItems = JSON.parse(r2.value);
+        } catch (e) {}
+        try {
+          var r3 = await window.storage.get('trip-grocery-checklist', false);
+          if (r3 && r3.value) savedGrocery = JSON.parse(r3.value);
+        } catch (e) {}
+      }
+    } catch (e) {}
+    buildOpenItems(savedOpenItems);
+    buildPacking(savedPacking);
+    buildGrocery(savedGrocery);
+  }
+  init();
+})();
+</script>
