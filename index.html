@@ -308,6 +308,10 @@
   #trip-app .fish-row { font-size: 12.5px; line-height: 1.6; margin: 5px 0; color: var(--ink); }
   #trip-app .fish-row b { color: var(--pine); font-weight: 600; }
   #trip-app .fish-gear-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--river); margin: 12px 0 0; }
+  #trip-app .fish-barbs { font-size: 12px; line-height: 1.5; border-radius: 7px; padding: 8px 11px; margin: 0 0 10px; }
+  #trip-app .fish-barbs b { text-transform: uppercase; letter-spacing: 0.4px; font-size: 11.5px; }
+  #trip-app .fish-barbs.req { background: #F6DCC9; color: var(--rust-dark); border: 1px solid var(--rust); }
+  #trip-app .fish-barbs.ok { background: #E1EEE0; color: #2F5C36; border: 1px solid var(--pine-light); }
 
   #trip-app .guide-note {
     font-family: 'Fraunces', serif; font-style: italic; font-size: 13.5px; color: var(--pine-light);
@@ -622,6 +626,7 @@
 
   var fishingByDay = {
     2: {
+      barbs: { req: false, text: 'You’re outside the park, so Montana rules apply — no barbless mandate and barbed hooks are legal. Pinch them anyway for fast catch-and-release in this warm, low water.' },
       water: 'Yellowstone River through Gardiner and up into Yankee Jim Canyon (US-89 pullouts) — browns, rainbows, cutthroat, and whitefish. Montana license, and barbs are legal here since you’re outside the park.',
       when: 'It’s warm and low right now (71°F, below the 25th percentile), so fish the first two hours of light and the last hour before dark, and leave it alone midday. If your thermometer reads over 70°F, give the fish the day off.',
       spots: 'Read the seams — cast where fast water meets slow, the tailouts of riffles, and shaded bank pockets. Yankee Jim Canyon’s pocket water holds fish in the oxygenated whitewater even when it’s warm.',
@@ -637,6 +642,7 @@
       ]
     },
     3: {
+      barbs: { req: true, text: 'Inside Yellowstone NP — barbless is the law. Pinch every barb flat (flies, spinners, and spoons alike). Also one hook per lure, up to two flies per leader, artificial-only, no lead.' },
       water: 'Nez Perce Ford (old Buffalo Ford) and LeHardy Rapids on the Yellowstone mainstem — native Yellowstone cutthroat, catch-and-release by law, open since July 15. Easy gravel wading, and the one everyone comes for.',
       when: 'The mainstem here isn’t under the heat closure, but the Firehole, Gibbon, and lower Madison are (shut 2 PM–sunrise) — so fish those only in the morning window and save the Yellowstone cutthroat for the evening rise.',
       spots: 'Work the current seams and drop-offs at the ford and the soft water below LeHardy Rapids where cutthroat stack. They rise deliberately — spot the nose, lead it, and wait a full beat before setting or you’ll pull it out of their mouth.',
@@ -652,6 +658,7 @@
       ]
     },
     4: {
+      barbs: { req: true, text: 'Still in Yellowstone NP — barbless, artificial-only, and lead-free apply on Lewis Lake and the channel too. Pinch the spinner and streamer barbs, not just the flies.' },
       water: 'Lewis Lake shoreline and the Lewis Channel (the river linking Lewis to Shoshone) — brown trout and lake trout, cold and immune to the heat closures, and castable right from shore. This is your sunset spot.',
       when: 'Prime time is the last hour of light, when browns slide shallow to feed as the sun comes off the water. Best sunset session of the Yellowstone leg — be on the water by 7:30.',
       spots: 'Cast to the drop-offs where the shallows fall into dark water, and the channel mouth where current meets lake. Fan-cast and cover water; cruising browns won’t come to you.',
@@ -666,6 +673,7 @@
       ]
     },
     5: {
+      barbs: { req: true, text: 'Yellowstone NP water — barbless, artificial-only, lead-free applies on Yellowstone Lake and Lewis just as on the rivers. (A kept invasive lake trout is the one legal exception to release, not to the barbless rule.)' },
       water: 'A sightseeing day (Hayden Valley + Artist Point), but the evening is yours: swing back through Lewis Lake, or fish the West Thumb / Grant Village shoreline of Yellowstone Lake for native cutthroat right from camp.',
       when: 'Time the loop so you’re on the water for the last hour. After a full day in the truck, a sunset session off the lake shore is the reset.',
       spots: 'On Yellowstone Lake, walk the shoreline points and cast parallel to the drop-off. On Lewis, repeat last night’s drop-off and channel-mouth game.',
@@ -680,6 +688,7 @@
       ]
     },
     6: {
+      barbs: { req: false, text: 'You’ve left Yellowstone — Wyoming/Grand Teton has no barbless mandate, so barbs are legal here (artificial flies and lures only, no bait, inside the park). Barbless is still strongly advised for these native fine-spotted cutthroat.' },
       water: 'The Snake below Jackson Lake Dam — a dam-fed tailwater running cold all day, holding fine-spotted Snake River cutthroat found nowhere else on Earth. Wyoming license here, not the park permit.',
       when: 'The tailwater shrugs off the heat, so this is a rare all-day option — but dawn and the sunset hour are still when the big cutthroat eat with abandon. Fish both ends of the day hard.',
       spots: 'Wade the riffles and seams in the runs below the dam, around Cattleman’s Bridge, and the Pacific Creek confluence. Fine-spotted cutthroat sit in the soft seam beside the fast water — drift the bubble line.',
@@ -696,6 +705,7 @@
       ]
     },
     7: {
+      barbs: { req: false, text: 'Wyoming again — barbs are legal on the Snake and Gros Ventre (artificial-only in the park). Flat Creek on the Elk Refuge is stricter: artificial FLIES only (no spinners), daylight hours, and just one cutthroat over 20" may be kept. No barbless mandate on either, but pinch them for these natives.' },
       water: 'Two options: the Snake at first light before the UTV tour (same foam-and-spinner game as Day 6), and Flat Creek on the National Elk Refuge in the evening — a spring creek that opens Aug 1, fly-only, holding trophy fine-spotted cutthroat. The Gros Ventre by camp holds cutthroat too.',
       when: 'Hit the Snake at dawn, be at Togwotee by 12:40 for the UTV, then save Flat Creek for the evening — spring-creek fish feed best in soft, low light.',
       spots: 'Flat Creek is sight-fishing: creep the banks, spot a feeding fish, and lead it. These are the spookiest, most-pressured cutthroat of the trip — a downstream slack-line presentation beats lining them.',
@@ -711,6 +721,7 @@
       ]
     },
     8: {
+      barbs: { req: false, text: 'Back in Montana — barbs are legal again, same as Day 2. Pinch for a quick release; the evening water is still warm and low.' },
       water: 'Back on the Montana Yellowstone at Gardiner for a last-night session — browns, rainbows, cutthroat, and whitefish, the same water as Day 2.',
       when: 'It’s a long transit day, so treat the evening as the payoff — the last hour of light is the sweet spot and the water’s coolest then.',
       spots: 'The seams and riffle tailouts right around Gardiner, or a quick run up to Yankee Jim Canyon’s pocket water if the light holds.',
@@ -742,7 +753,8 @@
         f.gear.map(function(g) { return '<a class="link-chip" href="' + g.url + '" target="_blank" rel="noopener">' + g.label + '</a>'; }).join('') +
         '</div>';
     }
-    return '<div class="fish-block"><p class="fish-label">Fishing playbook — spinner &amp; fly</p>' + inner + gearHtml + '</div>';
+    var barbsHtml = f.barbs ? '<div class="fish-barbs ' + (f.barbs.req ? 'req' : 'ok') + '"><b>' + (f.barbs.req ? 'Barbless required' : 'Barbs OK') + '</b> — ' + f.barbs.text + '</div>' : '';
+    return '<div class="fish-block"><p class="fish-label">Fishing playbook — spinner &amp; fly</p>' + barbsHtml + inner + gearHtml + '</div>';
   }
 
   var openItemsData = [
