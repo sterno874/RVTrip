@@ -314,6 +314,8 @@
   #trip-app .fish-barbs.ok { background: #E1EEE0; color: #2F5C36; border: 1px solid var(--pine-light); }
   #trip-app .fish-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; display: block; margin: 2px 0 3px; background: var(--cream); }
   #trip-app .fish-credit { font-size: 10.5px; color: var(--ink-soft); font-style: italic; margin: 0 0 9px; }
+  #trip-app .panel-img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; display: block; margin: 4px 0 2px; border: 1px solid var(--line); }
+  #trip-app .panel-img-credit { font-size: 10.5px; color: var(--ink-soft); font-style: italic; margin: 0 0 16px; }
 
   #trip-app .guide-note {
     font-family: 'Fraunces', serif; font-style: italic; font-size: 13.5px; color: var(--pine-light);
@@ -435,8 +437,12 @@
       <div style="width:20px;"></div>
       <div><p class="alert-title">The plan: one big shop, two top-ups</p><p class="alert-body">Big run Sunday Day 1 in Bozeman: gear at Sportsman’s Warehouse (Sun 10–6) FIRST, then groceries at Town &amp; Country Foods (open til 10 PM) after — gear stores close early on Sundays, food doesn’t. Top up at Gardiner Market Day 2, restock produce/ice at Jackson Albertsons Day 7. Two coolers: one drinks-and-daily (opened constantly), one deep-storage for meats (opened once a day, stays cold).</p></div>
     </div>
+    <img class="panel-img" src="images/yellowstone-lake-fishing.jpg" alt="Fishing on Yellowstone Lake" loading="lazy">
+    <div class="panel-img-credit">Fishing Yellowstone Lake — source of your one legal keeper trout (via Wikimedia Commons)</div>
     <p class="section-label">Dinner plan, night by night</p>
     <div id="meals-list"></div>
+    <img class="panel-img" src="images/grilled-trout.jpg" alt="Trout in foil on the grill" loading="lazy">
+    <div class="panel-img-credit">Foil-wrapped trout over the coals — exactly how the catch of the day gets cooked (via Wikimedia Commons)</div>
     <p class="section-label">Breakfast &amp; lunch system</p>
     <div id="meals-system"></div>
     <p class="section-label">Grocery checklist (tap to check off while shopping)</p>
@@ -726,7 +732,7 @@
       ]
     },
     6: {
-      img: 'images/cutthroat.jpg', imgCap: 'Fine-spotted Snake River cutthroat — USFWS illustration',
+      img: 'images/snake-cutthroat.jpg', imgCap: 'Fine-spotted Snake River cutthroat — via Wikimedia Commons',
       keep: 'Legal to keep here — Wyoming raised the limit to 6 trout on the dam-to-gauging-station stretch for 2026 — but the fine-spotted cutthroat exist nowhere else on Earth, so release them. Whitefish are fair game if you want meat. At heart this is a release day.',
       barbs: { req: false, text: 'You’ve left Yellowstone — Wyoming/Grand Teton has no barbless mandate, so barbs are legal here (artificial flies and lures only, no bait, inside the park). Barbless is still strongly advised for these native fine-spotted cutthroat.' },
       water: 'The Snake below Jackson Lake Dam — a dam-fed tailwater running cold all day, holding fine-spotted Snake River cutthroat found nowhere else on Earth. Wyoming license here, not the park permit.',
@@ -745,7 +751,7 @@
       ]
     },
     7: {
-      img: 'images/cutthroat.jpg', imgCap: 'Fine-spotted cutthroat — Snake & Flat Creek (USFWS illustration)',
+      img: 'images/snake-cutthroat.jpg', imgCap: 'Fine-spotted cutthroat — Snake & Flat Creek (via Wikimedia Commons)',
       keep: 'Also release-at-heart: the Snake and Gros Ventre cutthroat go back, and Flat Creek lets you keep only one cutthroat over 20" (a trophy you’ll want to release anyway). Come here for the fish, not the fillet.',
       barbs: { req: false, text: 'Wyoming again — barbs are legal on the Snake and Gros Ventre (artificial-only in the park). Flat Creek on the Elk Refuge is stricter: artificial FLIES only (no spinners), daylight hours, and just one cutthroat over 20" may be kept. No barbless mandate on either, but pinch them for these natives.' },
       water: 'Two options: the Snake at first light before the UTV tour (same foam-and-spinner game as Day 6), and Flat Creek on the National Elk Refuge in the evening — a spring creek that opens Aug 1, fly-only, holding trophy fine-spotted cutthroat. The Gros Ventre by camp holds cutthroat too.',
@@ -911,7 +917,7 @@
     { day: 'Day 6 \u00b7 Flagg Ranch', title: 'Carne asada tacos', body: 'The marinated flank steak (it\u2019s been soaking since Bozeman \u2014 citrus, garlic, cumin). Char it, slice thin, corn tortillas, onion-cilantro, lime. Best meal of the trip for $20.' },
     { day: 'Day 7 \u00b7 Jackson', title: 'Town night \u2014 eat out in Jackson', body: 'You\u2019re in Jackson on a Saturday evening after a UTV tour. Don\u2019t cook. Options within a block of the square: Local (steaks), Hand Fire Pizza (in an old theater), Snake River Brewing. Restock groceries at Albertsons before heading back.' },
     { day: 'Day 8 \u00b7 Gardiner', title: 'Easy night: pizza in town', body: 'After the 4.5-hour drive, nobody wants dishes. Yellowstone Pizza Company or Iron Horse in Gardiner, then pack the rig for the morning.' },
-    { day: 'Bonus \u00b7 any night', title: 'Trout dinner (conditional)', body: 'Yellowstone\u2019s native cutthroat are catch-and-release by law \u2014 don\u2019t plan on eating those. But if someone lands a lake trout from Yellowstone Lake, regulations REQUIRE killing it (invasive). Butter, lemon, foil, coals. Bonus meal, not the plan.' }
+    { day: 'Days 4\u20135 \u00b7 a real plan', title: 'Fresh trout dinner \u2014 now it\u2019s on the menu', body: 'You have keeper water this trip, so plan a catch-and-cook night. At Lewis Lake (Day 4) you may keep 5 combined lake, brook, or brown trout (only one brown); any lake trout from Yellowstone Lake (Day 5) MUST be kept. Cook it the evening you land it: fillet, butter, lemon, salt, wrapped in foil in the coals or seared in the cast iron. Run it as an appetizer before the Day 4 fajitas or the Day 5 ribeyes \u2014 or the main event if the fishing\u2019s good. Every native cutthroat elsewhere stays catch-and-release; see the Day 4\u20135 fishing playbooks for the rules.' }
   ];
 
   var mealSystemData = [
