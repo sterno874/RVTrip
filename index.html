@@ -474,11 +474,11 @@
         '<b>2.</b> REI, next door on Tschache (Sun 11\u20136) \u2014 only if anyone needs clothing: base layers, rain shells, river shoes.',
         '<b>3.</b> Town &amp; Country Foods (multiple locations, 7 AM\u201310 PM daily) \u2014 the full grocery list from the Meals tab. Local chain, strong meat counter for the ribeyes and bison brats. Costco (members, Sun ~10\u20136) works for bulk water/snacks if you\u2019re there before 6.',
         'Montana fishing licenses are online-only \u2014 buy on your phone from anywhere, no store stop needed (link below).',
-        '<b>Fish Sunday evening (optional):</b> If there\u2019s a window before the 7:30 steak reservation, the Tacoma reaches close-in Bozeman water \u2014 the Gallatin in Gallatin Canyon (US-191 south) or the East Gallatin in town. Montana license, barbs OK. Keep it short; dinner wins.',
         'Real kitchen tonight &mdash; hold off loading the RV cooler until Monday morning.'
       ],
       links: [
         { label: 'Buy Montana fishing license', url: 'https://fwp.mt.gov/buyandapply/fishinglicenses' },
+        { label: 'Montana fishing restrictions (hoot owl)', url: 'https://fwp.mt.gov/news/current-closures-restrictions/waterbody-closures' },
         { label: 'Sportsman\u2019s Warehouse Bozeman', url: 'https://stores.sportsmans.com/sportsmans-warehouse/us/mt/bozeman/2214-tschache-lane' },
         { label: 'Yellow Dog Flyfishing (Bozeman)', url: 'https://www.yellowdogflyfishing.com/pages/yellow-dog-fly-shop' },
         { label: 'J.W. Heist Steakhouse', url: 'https://jwheist.com/' }
@@ -628,6 +628,24 @@
   ];
 
   var fishingByDay = {
+    1: {
+      barbs: { req: false, text: 'Montana rules — no barbless mandate, so barbs are legal. Pinch them anyway for a quick release in warm summer water.' },
+      water: 'Bozeman is bracketed by trout water, but Sunday is tight and hot. Best bets with the Tacoma: the Gallatin up in Gallatin Canyon (US-191 south toward Big Sky) for cool freestone pocket water, or Hyalite Reservoir and its creek (~30 min south) for cold mountain water. The East Gallatin runs right through town if you only have twenty minutes.',
+      when: 'You land ~10 AM, but errands, the 4:00 Airbnb check-in, and the 7:30 steak reservation eat the day — and hoot-owl is the real limiter. The lower Gallatin (Amsterdam Rd to the Missouri) has been closed 2 PM–midnight since July 15, with more SW Montana water restricted, so an evening session has to be on cool, unrestricted water (the canyon or Hyalite) — or fish a short window before 2 PM. Check FWP’s list the day-of (link in this card).',
+      spots: 'Gallatin Canyon: pull off at the fishing accesses along US-191 and work the pocket water and seams — wade-friendly, with fish holding behind every boulder. Hyalite: cast from shore or at the inlet for brookies, cutthroat, and grayling. East Gallatin: the in-town access points, but it runs warm and low — treat it as a quick-cast, not a session.',
+      fly: 'August is hopper time, and you already own the box — no need to buy. Fish a hopper-dropper (Chubby Chernobyl or Morrish Hopper up top, a beadhead Pheasant Tail 18–24" below) in the canyon, and a Parachute Adams or Elk Hair Caddis for evening risers. At Hyalite, a Woolly Bugger or a small Adams.',
+      spin: 'Only if you’ve already grabbed the new 2-piece rod at Sportsman’s — then a Panther Martin or Blue Fox Vibrax swung through the canyon pocket water. Otherwise make it a fly-rod evening; the spinning setup can wait for Gardiner.',
+      tip: 'Genuinely optional — you have eight more days of fishing ahead and a travel day behind you. If the canyon or Hyalite is open and cool, steal an hour; if everything nearby is under hoot-owl by the time you’re free, skip it, enjoy the steak, and start fresh Day 2. Always check FWP’s current restrictions first.',
+      gear: [
+        { label: 'Chubby Chernobyl', url: 'https://www.amazon.com/s?k=chubby+chernobyl+hopper+fly' },
+        { label: 'Morrish Hopper', url: 'https://www.amazon.com/s?k=morrish+hopper+fly' },
+        { label: 'Parachute Adams', url: 'https://www.amazon.com/s?k=parachute+adams+dry+fly' },
+        { label: 'Elk Hair Caddis', url: 'https://www.amazon.com/s?k=elk+hair+caddis+dry+fly' },
+        { label: 'Pheasant Tail nymph', url: 'https://www.amazon.com/s?k=pheasant+tail+nymph+fly' },
+        { label: 'Panther Martin', url: 'https://www.amazon.com/s?k=panther+martin+spinner' },
+        { label: 'Blue Fox Vibrax', url: 'https://www.amazon.com/s?k=blue+fox+vibrax+spinner' }
+      ]
+    },
     2: {
       barbs: { req: false, text: 'You’re outside the park, so Montana rules apply — no barbless mandate and barbed hooks are legal. Pinch them anyway for fast catch-and-release in this warm, low water.' },
       water: 'Yellowstone River through Gardiner and up into Yankee Jim Canyon (US-89 pullouts) — browns, rainbows, cutthroat, and whitefish. Montana license, and barbs are legal here since you’re outside the park.',
